@@ -54,7 +54,7 @@ public class AutoC extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                   // ((DcMotorEx) robot.shooter2).setVelocity(0);
+                    ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
                 .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(-2.0))
                 .build();
@@ -154,7 +154,7 @@ public class AutoC extends LinearOpMode {
         drive.followTrajectory(C5);
 
        ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-      //  ((DcMotorEx) robot.shooter2).setVelocity(0);
+       ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
 
         //SHOOT POSITION
         drive.followTrajectory(C6);

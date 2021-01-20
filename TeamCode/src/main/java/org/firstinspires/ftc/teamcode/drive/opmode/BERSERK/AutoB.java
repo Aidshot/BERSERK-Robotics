@@ -48,7 +48,7 @@ public class AutoB extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                   // ((DcMotorEx) robot.shooter2).setVelocity(0);
+                    ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
                 .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(0.0))
                 .build();
@@ -119,7 +119,7 @@ public class AutoB extends LinearOpMode {
         robot.wobble_lift.setPosition(wobble_up);
 
        ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-      //  ((DcMotorEx) robot.shooter2).setVelocity(0);
+        ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
 
         //SHOOT POSITION
         drive.followTrajectory(B4);

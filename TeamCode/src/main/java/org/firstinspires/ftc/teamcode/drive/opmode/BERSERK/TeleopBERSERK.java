@@ -77,7 +77,7 @@ public class TeleopBERSERK extends LinearOpMode {
          //SHOOTER
              if (gamepad1.a) {
           ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-          //((DcMotorEx) robot.shooter2).setVelocity(0);
+          ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                    } else if (gamepad1.b) {
                  ((DcMotorEx) robot.shooter1).setVelocity(0);
                  ((DcMotorEx) robot.shooter2).setVelocity(0);
@@ -122,8 +122,7 @@ public class TeleopBERSERK extends LinearOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("launch angle", launch_angle);
-            telemetry.addData("shooter 1 rpm", ((DcMotorEx) robot.shooter1).getVelocity());
-            telemetry.addData("shooter 2 rpm", ((DcMotorEx) robot.shooter2).getVelocity());
+            telemetry.addData("shooter rpm", ((DcMotorEx) robot.shooter1).getVelocity());
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
