@@ -22,14 +22,11 @@ public class TeleopBERSERK extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-       HardwareBERSERK robot       = new HardwareBERSERK();
-
+        HardwareBERSERK robot       = new HardwareBERSERK();
         robot.init(hardwareMap);
-
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
         waitForStart();
@@ -74,7 +71,7 @@ public class TeleopBERSERK extends LinearOpMode {
                   robot.feeder_turn.setPower(0); 
              }
 
-         //SHOOTER
+            //SHOOTER
              if (gamepad1.a) {
           ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
           ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());

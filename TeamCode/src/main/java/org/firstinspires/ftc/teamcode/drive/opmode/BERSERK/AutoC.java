@@ -40,7 +40,7 @@ public class AutoC extends LinearOpMode {
         double wobble_open = 1;
         double wobble_up = 0.6;
         double wobble_down = 0.16;
-        long shootWait = 400;
+        long shootWait = 300;
 
         waitForStart();
 
@@ -108,7 +108,6 @@ public class AutoC extends LinearOpMode {
         drive.followTrajectory(C1);
 
         //SHOOT x 3
-        sleep(shootWait);
         robot.kicker.setPosition(kicker_out);
         sleep(shootWait);
         robot.kicker.setPosition(kicker_in);
@@ -160,7 +159,6 @@ public class AutoC extends LinearOpMode {
         drive.followTrajectory(C6);
 
         //SHOOT X 3
-        sleep(shootWait);
         robot.kicker.setPosition(kicker_out);
         sleep(shootWait);
         robot.kicker.setPosition(kicker_in);

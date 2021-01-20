@@ -34,7 +34,7 @@ public class AutoB extends LinearOpMode {
         double wobble_open = 1;
         double wobble_up = 0.6;
         double wobble_down = 0.16;
-        long shootWait = 400;
+        long shootWait = 300;
 
         waitForStart();
 
@@ -82,7 +82,6 @@ public class AutoB extends LinearOpMode {
         drive.followTrajectory(B1);
 
         //SHOOT x 3
-        sleep(shootWait);
         robot.kicker.setPosition(kicker_out);
         sleep(shootWait);
         robot.kicker.setPosition(kicker_in);
