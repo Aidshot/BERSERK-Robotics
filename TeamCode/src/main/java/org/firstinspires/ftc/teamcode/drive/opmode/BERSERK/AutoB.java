@@ -27,7 +27,7 @@ public class AutoB extends LinearOpMode {
         robot.init(hardwareMap);
 
         double shooter_target_velo = 1800;
-        double launch_angle = 0.174;
+        double launch_angle = 0.173;
         double kicker_out = 0.7;
         double kicker_in = 0.2;
         double wobble_close = 0.45;
