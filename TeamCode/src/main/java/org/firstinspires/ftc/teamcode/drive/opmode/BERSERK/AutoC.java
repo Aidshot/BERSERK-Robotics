@@ -18,12 +18,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.Arrays;
 
-//Road Runner Import
-
-//Vision Import
-//import org.firstinspires.ftc.teamcode.drive.opmode.UGContourRingDetector;
-//import org.firstinspires.ftc.teamcode.drive.opmode.UGContourRingPipeline;
-
 @Autonomous(group = "BERSERK")
 public class AutoC extends LinearOpMode {
     @Override
