@@ -53,17 +53,17 @@ public class AutoA extends LinearOpMode {
 
         //PICK UP WOBBLE 2
         Trajectory A3 = drive.trajectoryBuilder(A2.end(),true)
-                .splineToLinearHeading(new Pose2d(-19.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(-19.0, 38.0, Math.toRadians(135.0)), Math.toRadians(180.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A4 = drive.trajectoryBuilder(A3.end(),true)
-                .splineToLinearHeading(new Pose2d(55.0, 20.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(55.0, 15.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .forward(9)
+                .back(4)
                 .build();
 
         //SET SERVOS

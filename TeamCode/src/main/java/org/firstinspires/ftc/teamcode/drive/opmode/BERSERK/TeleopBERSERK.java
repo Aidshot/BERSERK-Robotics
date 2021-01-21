@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /**
  * This opmode demonstrates how to create a teleop using just the SampleMecanumDrive class without
@@ -21,8 +20,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleopBERSERK extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize SampleMecanumDrive
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         HardwareBERSERK robot       = new HardwareBERSERK();
         robot.init(hardwareMap);
@@ -53,6 +50,7 @@ public class TeleopBERSERK extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
 
+            //DRIVING CONTROL
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -61,21 +59,21 @@ public class TeleopBERSERK extends LinearOpMode {
                     )
             );
 
-            //INTAKE
+            //INTAKE+INDEXER
             if (gamepad1.right_bumper){
                  robot.intake.setPower(1);
                  robot.feeder_turn.setPower(1);
             }
-            if (gamepad1.left_bumper){
+            else if (gamepad1.left_bumper){
                   robot.intake.setPower(0);
                   robot.feeder_turn.setPower(0); 
              }
 
             //SHOOTER
-             if (gamepad1.a) {
+             if (gamepad1.a || gamepad2.a) {
           ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
           //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
-                   } else if (gamepad1.b) {
+                   } else if (gamepad1.b || gamepad2.b) {
                  ((DcMotorEx) robot.shooter1).setVelocity(0);
                  ((DcMotorEx) robot.shooter2).setVelocity(0);
              }
@@ -84,10 +82,16 @@ public class TeleopBERSERK extends LinearOpMode {
             robot.flap.setPosition(Math.min(Math.max(launch_angle, min_launch_angle), max_launch_angle));
 
             if (gamepad1.dpad_up && launch_angle >= min_launch_angle) {
-                launch_angle += -0.0001;
+                launch_angle += -0.0002;
             }
             else if (gamepad1.dpad_down && launch_angle <= max_launch_angle) {
-                launch_angle += 0.0001;
+                launch_angle += 0.0002;
+            }
+            // Y prepares for endgame by dropping flap and powering up shooter
+            else if (gamepad1.y || gamepad2.y) {
+                launch_angle= 0.113;
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
             }
 
             // WOBBLE ARM
