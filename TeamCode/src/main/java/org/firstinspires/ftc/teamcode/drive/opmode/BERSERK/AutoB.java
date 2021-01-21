@@ -113,6 +113,7 @@ public class AutoB extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         robot.intake.setPower(0.8);
+        robot.feeder_turn.setPower(1);
         drive.followTrajectory(B3);
 
         robot.wobble_lift.setPosition(wobble_up);
@@ -123,7 +124,7 @@ public class AutoB extends LinearOpMode {
         //SHOOT POSITION
         drive.followTrajectory(B4);
 
-        //SHOOT X 3
+        //SHOOT X 1
         sleep(2500);
 
         robot.kicker.setPosition(kicker_out);

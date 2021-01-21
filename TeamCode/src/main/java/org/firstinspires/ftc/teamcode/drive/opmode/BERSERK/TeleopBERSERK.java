@@ -74,7 +74,7 @@ public class TeleopBERSERK extends LinearOpMode {
             //SHOOTER
              if (gamepad1.a) {
           ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-          ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
+          //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                    } else if (gamepad1.b) {
                  ((DcMotorEx) robot.shooter1).setVelocity(0);
                  ((DcMotorEx) robot.shooter2).setVelocity(0);
