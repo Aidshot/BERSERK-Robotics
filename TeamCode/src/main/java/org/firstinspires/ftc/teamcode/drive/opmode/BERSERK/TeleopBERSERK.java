@@ -39,7 +39,7 @@ public class TeleopBERSERK extends LinearOpMode {
         double wobble_open = 1;
         double wobble_up = 0.6;
         double wobble_down = 0.16;
-        long shootWait = 200;
+        long shootWait = 150;
 
         //SET SERVOS
         robot.wobble_lift.setPosition(wobble_up);
@@ -73,7 +73,10 @@ public class TeleopBERSERK extends LinearOpMode {
              if (gamepad1.a || gamepad2.a) {
           ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
           //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
+                 //B Turns off Intake, Indexer, and Shooter
                    } else if (gamepad1.b || gamepad2.b) {
+               //  robot.intake.setPower(0);
+               //  robot.feeder_turn.setPower(0);
                  ((DcMotorEx) robot.shooter1).setVelocity(0);
                  ((DcMotorEx) robot.shooter2).setVelocity(0);
              }
@@ -89,7 +92,7 @@ public class TeleopBERSERK extends LinearOpMode {
             }
             // Y prepares for endgame by dropping flap and powering up shooter
             else if (gamepad1.y || gamepad2.y) {
-                launch_angle= 0.113;
+                launch_angle= 0.2;
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
             }

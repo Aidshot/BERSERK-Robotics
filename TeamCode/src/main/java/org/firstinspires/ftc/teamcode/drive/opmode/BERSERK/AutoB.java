@@ -28,7 +28,7 @@ public class AutoB extends LinearOpMode {
         double wobble_open = 1;
         double wobble_up = 0.6;
         double wobble_down = 0.16;
-        long shootWait = 300;
+        long shootWait = 350;
 
         waitForStart();
 
@@ -59,7 +59,7 @@ public class AutoB extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory B4 = drive.trajectoryBuilder(B3.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, 39.0, Math.toRadians(0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-3.0, 39.0, Math.toRadians(-2.0)), Math.toRadians(180))
                 .build();
 
         //PARK
@@ -135,5 +135,7 @@ public class AutoB extends LinearOpMode {
 
         //PARK
         drive.followTrajectory(B5);
+
+        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }

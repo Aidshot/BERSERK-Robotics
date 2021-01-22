@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.examples;
 
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -11,15 +11,13 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
+@Disabled
 @Autonomous(group = "BERSERK")
 public class SampleAutonomous extends LinearOpMode {
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
-
     private static final int HORIZON = 100; // horizon value to tune
-
     private static final boolean DEBUG = false; // if debug is wanted, change to true
-
     private static final boolean USING_WEBCAM = true; // change to true if using webcam
     private static final String WEBCAM_NAME = "webcam1"; // insert webcam name from configuration if using webcam
 
@@ -53,18 +51,13 @@ public class SampleAutonomous extends LinearOpMode {
         }
 
         camera.setPipeline(pipeline = new UGContourRingPipeline(telemetry, DEBUG));
-
         UGContourRingPipeline.Config.setCAMERA_WIDTH(CAMERA_WIDTH);
-
         UGContourRingPipeline.Config.setHORIZON(HORIZON);
-
         camera.openCameraDeviceAsync(() -> camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT));
 
         State state = State.ZERO;
 
         while (!isStarted()) {
-            // ^ this is very important, it makes sure that the detector is running until the opmode is started
-            //the ring stack is often changed after the init is started, therefore this gives the last detected value
             switch (pipeline.getHeight()) {
                 case ZERO:
                     state = State.ZERO;
@@ -87,10 +80,9 @@ public class SampleAutonomous extends LinearOpMode {
                     telemetry.update();
 
                 case FOUR:
-                    telemetry.addData("Stack","Four");
+                   // telemetry.addData("Stack","Four");
                     telemetry.update();
             }
-
         }
     }
 }
