@@ -26,7 +26,7 @@ public class AutoC extends LinearOpMode {
         HardwareBERSERK robot    = new HardwareBERSERK();
         robot.init(hardwareMap);
 
-        double shooter_target_velo = 1800;
+        double shooter_target_velo = 1750;
         double launch_angle = 0.174;
         double kicker_out = 0.7;
         double kicker_in = 0.2;
@@ -34,7 +34,7 @@ public class AutoC extends LinearOpMode {
         double wobble_open = 1;
         double wobble_up = 0.6;
         double wobble_down = 0.16;
-        long shootWait = 300;
+        long shootWait = 350;
 
         waitForStart();
 
@@ -48,7 +48,7 @@ public class AutoC extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                    ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
+                  //  ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
                 .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(-2.0))
                 .build();
@@ -75,12 +75,12 @@ public class AutoC extends LinearOpMode {
 
         //INTAKE STACK (Slow Constraints)
         Trajectory C5 = drive.trajectoryBuilder(C4.end())
-                .forward(17,
+                .forward(8,
                         new MinVelocityConstraint(Arrays.asList(
-                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                        new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
-                  )
-                ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(5, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         //SHOOT POSITION
@@ -100,6 +100,7 @@ public class AutoC extends LinearOpMode {
 
         //SHOOT POSITION
         drive.followTrajectory(C1);
+
 
         //SHOOT x 3
         robot.kicker.setPosition(kicker_out);
@@ -136,21 +137,24 @@ public class AutoC extends LinearOpMode {
 
         robot.wobble_lift.setPosition(wobble_up);
 
+        robot.intake.setPower(0.8);
+        robot.feeder_turn.setPower(1);
+
         //RAM STACK
         drive.followTrajectory(C4);
 
-        robot.intake.setPower(0.8);
-        robot.feeder_turn.setPower(1);
         sleep(500);
 
         //INTAKE STACK
         drive.followTrajectory(C5);
 
        ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-       ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
+       //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
 
         //SHOOT POSITION
         drive.followTrajectory(C6);
+
+        sleep(3000);
 
         //SHOOT X 3
         robot.kicker.setPosition(kicker_out);
@@ -177,5 +181,6 @@ public class AutoC extends LinearOpMode {
 
         //PARK
         drive.followTrajectory(C7);
+        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }

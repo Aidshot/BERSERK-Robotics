@@ -17,14 +17,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @TeleOp
 public class LinkedMotorTuner extends LinearOpMode {
-    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.003, 0, 0);
 
-    public static double kV = 1 / TuningController.rpmToTicksPerSecond(TuningController.MOTOR_MAX_RPM);
-    public static double kA = 0;
+    public static double kV = 0.00039;
+    public static double kA = 0.00015;
     public static double kStatic = 0;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-
     private final ElapsedTime veloTimer = new ElapsedTime();
 
     @Override

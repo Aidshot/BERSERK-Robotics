@@ -61,7 +61,9 @@ public class HardwareBERSERK
     public Servo flap           = null;
     public Servo wobble_lift    = null;
     public Servo wobble_claw    = null;
+    public Servo webcam_servo   = null;
     public CRServo feeder_turn    = null;
+    public CRServo intake_servo    = null;
 
     public static final double NEW_P = 2.5;
     public static final double NEW_I = 0.1;
@@ -109,6 +111,8 @@ public class HardwareBERSERK
         wobble_claw = hwMap.get(Servo.class, "wobble_claw");
         flap = hwMap.get(Servo.class, "flap");
         feeder_turn = hwMap.get(CRServo.class, "feeder_turn");
+        webcam_servo = hwMap.get(Servo.class, "webcam_servo");
+        feeder_turn = hwMap.get(CRServo.class, "intake_servo");
 
     }
  }
