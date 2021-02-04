@@ -44,13 +44,16 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
     public static double kV = 0.00039;
     public static double kA = 0.00015;
     public static double kStatic = 0;
-    private final ElapsedTime veloTimer = new ElapsedTime();
     private double lastTargetVelo = 0.0;
-
     private final PIDFController veloController = new PIDFController(MOTOR_VELO_PID, kV, kA, kStatic);
+
+    //Timer
+    private final ElapsedTime veloTimer = new ElapsedTime();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //Initializations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         HardwareBERSERK robot       = new HardwareBERSERK();
         robot.init(hardwareMap);
@@ -58,7 +61,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
 
-        // SETUP SHOOTER MOTORS //
+        // Motor Setup //
         DcMotorEx myMotor1 = hardwareMap.get(DcMotorEx.class, "shooter1");
         DcMotorEx myMotor2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -69,34 +72,50 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        //Start Pose
+        //Start Pose from PoseStorage
         drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
+
+        //Start Pose from left starting position
         //drive.getLocalizer().setPoseEstimate(new Pose2d(-63,50));
+
         headingController.setInputBounds(-Math.PI, Math.PI);
 
         waitForStart();
 
-        //STATE VARIABLES
+        ////VARIABLES\\\\\
+
+        //Flap
         double launch_angle = 0.174;
         double launch_angle_offset = 0;
         double max_launch_angle = 0.2;
         double min_launch_angle = 0.113;
+
+        //Kicker
         double kicker_out = 0.68;
         double kicker_in = 0.2;
+
+        //Wobble Claw
         double wobble_close = 0.18;
         double wobble_open = 0.6;
+
+        //Wobble Lift
         double wobble_up = 0.6;
         double wobble_down = 0.2;
         long shootWait = 150;
-        double turn_right = -8; // deg
-        double turn_left = 6; // deg
-        //double emergency_close = 0.2;
-        //double emergency_open = 0.7;
 
         //Initial Shooter Velocity
         double targetVelo = 0;
 
-        //SET SERVOS
+        //Miscellaneous
+        double turn_right = -8;
+        double turn_left = 6;
+        //double emergency_close = 0.2;
+        //double emergency_open = 0.7;
+
+        //Toggle Y
+        boolean last_value_of_y = false;
+
+        //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
         robot.wobble_claw.setPosition(wobble_open);
         robot.kicker.setPosition(kicker_out);
@@ -132,7 +151,9 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             myMotor1.setPower(power);
             myMotor2.setPower(power);
 
-            //INTAKE+INDEXER
+            //// Gamepad Controls \\\\
+
+            //Intake + Indexer
             if (gamepad1.right_bumper){
                 robot.intake.setPower(1);
                 robot.feeder_turn.setPower(1);
@@ -147,7 +168,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 robot.feeder_turn.setPower(-1);
             }
 
-            //SHOOTER
+            //Shooter
             if (gamepad1.a || gamepad2.a) {
                 targetVelo = 1700; //1800
             }
@@ -155,9 +176,10 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 targetVelo = 0;
             }
 
-            // DISTANCE TO FLAP
+            //Distance to Tower
             double getDistance = Math.sqrt(Math.pow(targetPosition.getX() - poseEstimate.getX(),2) + Math.pow(targetPosition.getY() - poseEstimate.getY(),2));
 
+            //Automatic Flap Adjustment
             if (90 >= getDistance && getDistance>= 50) {
                 launch_angle = 0.174;
             }
@@ -165,18 +187,22 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 launch_angle = 0.172;
             }
             else if (130 >= getDistance && getDistance>= 110) {
-                launch_angle = 0.165;
+                launch_angle = 0.168;
             }
             else if (140 >= getDistance && getDistance>= 130) {
-                launch_angle = 0.160;
+                launch_angle = 0.164;
             }
             else if (150 >= getDistance && getDistance>= 140) {
-                launch_angle = 0.15;
+                launch_angle = 0.160;
             }
 
-            // FLAP
+            //Backwall= 133 in
+            //Shooting Spot= 74 in
+
+            //Flap Set Position
             robot.flap.setPosition(Math.min(Math.max(launch_angle + launch_angle_offset, min_launch_angle), max_launch_angle));
 
+            //Flap Manual Offset
             if (gamepad1.dpad_up) {
                 launch_angle_offset += -0.00025;
             }
@@ -185,12 +211,16 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             }
 
             // Y prepares for endgame by dropping flap and powering up shooter
-            else if (gamepad1.y) {
-                launch_angle_offset= 0.2;
-                targetVelo = 1800;
+            if (gamepad1.y) {
+                targetVelo = 1700;
+                launch_angle_offset = 0.2;
+
+                //if (launch_angle_offset == 0.2) {
+                //launch_angle_offset = 0.174;
+                //}
             }
 
-            //POWERSHOT TURNS
+            //Powershot Turns
             if (gamepad1.dpad_left) {
                 drive.turn(Math.toRadians(turn_left));
             }
@@ -198,7 +228,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 drive.turn(Math.toRadians(turn_right));
             }
 
-            // WOBBLE ARM
+            //Wobble Arm
             if (gamepad2.dpad_up) {
                 robot.wobble_lift.setPosition(wobble_up);
             }
@@ -212,19 +242,12 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_close);
             }
 
-            //FEEDER SERVO
+            //Feeder Servo
             if (gamepad1.x) {
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
             }
-
-            //EMERGENCY SERVO
-         //   if (gamepad2.x) {
-         //       robot.emergency_servo.setPosition(emergency_close);
-         //       sleep(400);
-         //       robot.emergency_servo.setPosition(emergency_open);
-         //   }
 
             switch (currentMode) {
                 case NORMAL_CONTROL:
@@ -265,6 +288,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                             headingInput
                     );
 
+                    //Dashboard Setup
                     fieldOverlay.setStroke("#dd2c00");
                     fieldOverlay.strokeCircle(targetPosition.getX(), targetPosition.getY(), DRAWING_TARGET_RADIUS);
                     fieldOverlay.setStroke("#b89eff");
@@ -282,6 +306,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             drive.getLocalizer().update();
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+            //DS Telemetry
             telemetry.addData("Distance", getDistance);
             //telemetry.addData("x", poseEstimate.getX());
             //telemetry.addData("y", poseEstimate.getY());
@@ -290,6 +315,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             telemetry.addData("mode", currentMode);
             telemetry.update();
 
+            //Dashboard Telemetry
             packet.put("FlyWheel Velocity", motorVelo);
             dashboard.sendTelemetryPacket(packet);
         }
