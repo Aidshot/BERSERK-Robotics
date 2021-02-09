@@ -37,7 +37,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 
     //Target Position of TowerGoal
-    private Vector2d targetPosition = new Vector2d(70, 37);
+    private Vector2d targetPosition = new Vector2d(72, 36);
 
     //Velocity PID
     public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.003, 0, 0);
@@ -49,7 +49,6 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
     //Timer
     private final ElapsedTime veloTimer = new ElapsedTime();
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -101,19 +100,14 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
         //Wobble Lift
         double wobble_up = 0.6;
         double wobble_down = 0.2;
-        long shootWait = 150;
 
         //Initial Shooter Velocity
         double targetVelo = 0;
 
         //Miscellaneous
-        double turn_right = -8;
-        double turn_left = 6;
-        //double emergency_close = 0.2;
-        //double emergency_open = 0.7;
-
-        //Toggle Y
-        boolean last_value_of_y = false;
+        long shootWait = 150;
+        double turn_right = -7;
+        double turn_left = 12;
 
         //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
@@ -127,6 +121,12 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
         veloTimer.reset();
 
         while (opModeIsActive() && !isStopRequested()) {
+
+            //Gamepad Input
+            double ly = -gamepad1.left_stick_y;
+            double lx = -gamepad1.left_stick_x;
+            double rx = -gamepad1.right_stick_x;
+
             //Initialize Localizer
             Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
             Pose2d driveDirection = new Pose2d();
@@ -163,6 +163,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 robot.feeder_turn.setPower(0);
             }
 
+            //Gamepad 2 Right Bumper reverses intake
             if (gamepad2.right_bumper){
                 robot.intake.setPower(-1);
                 robot.feeder_turn.setPower(-1);
@@ -187,10 +188,10 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 launch_angle = 0.172;
             }
             else if (130 >= getDistance && getDistance>= 110) {
-                launch_angle = 0.168;
+                launch_angle = 0.170;
             }
             else if (140 >= getDistance && getDistance>= 130) {
-                launch_angle = 0.164;
+                launch_angle = 0.166;
             }
             else if (150 >= getDistance && getDistance>= 140) {
                 launch_angle = 0.160;
@@ -214,10 +215,6 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             if (gamepad1.y) {
                 targetVelo = 1700;
                 launch_angle_offset = 0.2;
-
-                //if (launch_angle_offset == 0.2) {
-                //launch_angle_offset = 0.174;
-                //}
             }
 
             //Powershot Turns
@@ -252,14 +249,18 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             switch (currentMode) {
                 case NORMAL_CONTROL:
                     // Switch to align to point if gamepad1 left trigger is activated
-                    if (Math.abs(gamepad1.left_trigger) >= .5) {
+                    if (Math.abs(gamepad1.left_trigger) >= 0.5) {
                         currentMode = Mode.ALIGN_TO_POINT;
                     }
 
                     driveDirection = new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            Math.signum(ly) * ly * ly,
+                            Math.signum(lx) * lx * lx,
+                            Math.signum(rx) * rx * rx
+
+                            //-gamepad1.left_stick_y,
+                            //-gamepad1.left_stick_x,
+                            //-gamepad1.right_stick_x
                     );
                     break;
 
@@ -270,8 +271,11 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                     }
 
                     Vector2d fieldFrameInput = new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
+                            Math.signum(ly) * ly * ly,
+                            Math.signum(lx) * lx * lx
+
+                            //-gamepad1.left_stick_y,
+                            //-gamepad1.left_stick_x
                     );
                     Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
                     Vector2d difference = targetPosition.minus(poseEstimate.vec());
@@ -308,10 +312,10 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
             //DS Telemetry
             telemetry.addData("Distance", getDistance);
-            //telemetry.addData("x", poseEstimate.getX());
-            //telemetry.addData("y", poseEstimate.getY());
-            //telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("launch angle", launch_angle+launch_angle_offset);
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("mode", currentMode);
             telemetry.update();
 
