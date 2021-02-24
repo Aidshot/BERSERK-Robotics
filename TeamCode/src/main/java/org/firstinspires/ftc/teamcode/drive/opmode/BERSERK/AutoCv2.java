@@ -52,7 +52,7 @@ public class AutoCv2 extends LinearOpMode {
         //DROP WOBBLE C
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-30.0, 55.0), Math.toRadians(0.0))
-                .splineTo(new Vector2d(55.0, 50.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(55.0, 50.0), Math.toRadians(0.0))
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                     // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());

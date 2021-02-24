@@ -53,7 +53,7 @@ public class FullAutoBERSERK extends LinearOpMode {
         HardwareBERSERK robot    = new HardwareBERSERK();
         robot.init(hardwareMap);
 
-        double shooter_target_velo = 1800;
+        double shooter_target_velo = 1840;
         double launch_angle = 0.178; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.2;
@@ -62,8 +62,8 @@ public class FullAutoBERSERK extends LinearOpMode {
         double wobble_up = 0.6;
         double wobble_down = 0.2;
         long shootWait = 380;
-        double emergency_close = 0.2;
-        double emergency_open = 0.7;
+
+
 
         double webcam_right = 0.3;
 
@@ -121,33 +121,42 @@ public class FullAutoBERSERK extends LinearOpMode {
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .addTemporalMarker(0.1, () -> {
+                    robot.foldout_lift.setPower(-1);
+                })
+                .addTemporalMarker(1.6, () -> {
+                    robot.foldout_lift.setPower(0);
+                })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                     // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(10.0, 47.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+               // .splineToLinearHeading(new Pose2d(10.0, 51.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TO WOBBLE 2
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
                 .splineTo(new Vector2d(-33.0, 25.0),Math.toRadians(80))
-                .splineToConstantHeading(new Vector2d(-39.5, 27.0),Math.toRadians(80),
+                .addTemporalMarker(0.1, () -> {
+                    robot.wobble_lift.setPosition(wobble_down);
+                })
+                .splineToConstantHeading(new Vector2d(-42, 26.0),Math.toRadians(80),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(5, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToLinearHeading(new Pose2d(10.0, 40.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(10.0, 42.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
@@ -160,11 +169,17 @@ public class FullAutoBERSERK extends LinearOpMode {
         //SHOOT POSITION
         Trajectory B1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .addTemporalMarker(0.1, () -> {
+                    robot.foldout_lift.setPower(-1);
+                })
+                .addTemporalMarker(1.6, () -> {
+                    robot.foldout_lift.setPower(0);
+                })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                     // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -191,11 +206,17 @@ public class FullAutoBERSERK extends LinearOpMode {
         //SHOOT POSITION
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .addTemporalMarker(0.1, () -> {
+                    robot.foldout_lift.setPower(-1);
+                })
+                .addTemporalMarker(1.6, () -> {
+                    robot.foldout_lift.setPower(0);
+                })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                     //  ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 38.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
                 .build();
 
         //WOBBLE C POSITION
@@ -246,9 +267,9 @@ public class FullAutoBERSERK extends LinearOpMode {
                 telemetry.addData("Stack:", "ZERO");
                 telemetry.update();
 
-                robot.intake.setPower(0.8);
-                sleep(500);
-                robot.intake.setPower(0.0);
+              //  robot.intake.setPower(0.8);
+              //  sleep(500);
+              //  robot.intake.setPower(0.0);
 
                 //SET SERVOS
                 robot.wobble_lift.setPosition(wobble_up);
@@ -288,7 +309,8 @@ public class FullAutoBERSERK extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_down);
                 sleep(700);
                 robot.wobble_claw.setPosition(wobble_open);
-                sleep(200);
+                sleep(400);
+                robot.wobble_lift.setPosition(wobble_up);
 
                 drive.followTrajectory(A3);
 

@@ -246,6 +246,15 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
             }
 
+            //Fold-Out Lift
+            if (gamepad2.right_stick_y < 0) {
+                robot.foldout_lift.setPower(1);
+            }
+            else if (gamepad2.right_stick_y > 0) {
+                robot.foldout_lift.setPower(-1);
+            }
+            else robot.foldout_lift.setPower(0);
+
             switch (currentMode) {
                 case NORMAL_CONTROL:
                     // Switch to align to point if gamepad1 left trigger is activated
