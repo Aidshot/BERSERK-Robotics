@@ -53,25 +53,19 @@ public class AutoCv2 extends LinearOpMode {
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-30.0, 55.0), Math.toRadians(0.0))
                 .splineTo(new Vector2d(55.0, 50.0), Math.toRadians(0.0))
-                .addDisplacementMarker(() -> {
-                    ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                    // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
-                })
                 .build();
 
-        //MOVE TO POWERSHOTS
+        //SHOOT POWERSHOTS AND GRAB WOBBLE 2
         Trajectory C2 = drive.trajectoryBuilder(C1.end(),true)
                 .splineToConstantHeading(new Vector2d(-5.0, 18.0), Math.toRadians(-90.0))
+                .splineToConstantHeading(new Vector2d(-5.0, 18.0), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 18.0, Math.toRadians(45)), Math.toRadians(140.0))
+                .splineToLinearHeading(new Pose2d(-5.0, 18.0, Math.toRadians(45)), Math.toRadians(140.0))
                 .build();
 
         //STRAFE AND SHOOT
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToConstantHeading(new Vector2d(-5.0, 0.0), Math.toRadians(-90.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                        new MecanumVelocityConstraint(10, DriveConstants.TRACK_WIDTH)
-                )
-                ), new ProfileAccelerationConstraint(10))
+                .splineToConstantHeading(new Vector2d(-5.0, 0.0), Math.toRadians(-90.0))
 
                 //SHOOT
                 .addTemporalMarker(0.1, () -> {

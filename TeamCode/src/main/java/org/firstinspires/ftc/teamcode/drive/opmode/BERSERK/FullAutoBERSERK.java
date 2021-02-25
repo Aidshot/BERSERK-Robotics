@@ -62,9 +62,6 @@ public class FullAutoBERSERK extends LinearOpMode {
         double wobble_up = 0.6;
         double wobble_down = 0.2;
         long shootWait = 380;
-
-
-
         double webcam_right = 0.3;
 
         robot.webcam_servo.setPosition(webcam_right);
@@ -124,26 +121,24 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(-1);
                 })
-                .addTemporalMarker(1.6, () -> {
+                .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                    // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 42.0), Math.toRadians(-2.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-               // .splineToLinearHeading(new Pose2d(10.0, 51.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TO WOBBLE 2
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineTo(new Vector2d(-33.0, 25.0),Math.toRadians(80))
-                .addTemporalMarker(0.1, () -> {
+                .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(80))
+                .addTemporalMarker(2.0, () -> {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
                 .splineToConstantHeading(new Vector2d(-42, 26.0),Math.toRadians(80),
@@ -156,14 +151,13 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //WOBBLE A POSITION
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToLinearHeading(new Pose2d(10.0, 42.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(10.0, 47.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(5)
+                .strafeRight(25)
                 .build();
-
 
         //   B AUTO TRAJECTORIES   //
         //SHOOT POSITION
@@ -172,14 +166,13 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(-1);
                 })
-                .addTemporalMarker(1.6, () -> {
+                .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                    // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-3.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -189,7 +182,7 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         Trajectory B3 = drive.trajectoryBuilder(B2.end(),true)
-                .splineToLinearHeading(new Pose2d(-19.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(-19.0, 42.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //SHOOT POSITION
@@ -209,35 +202,33 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(-1);
                 })
-                .addTemporalMarker(1.6, () -> {
+                .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                    //  ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
                 })
-                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 40.0), Math.toRadians(-3.0))
                 .build();
 
         //WOBBLE C POSITION
         Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .splineToConstantHeading(new Vector2d(55.0, 42.0), Math.toRadians(0.0))
+                .splineToConstantHeading(new Vector2d(52.0, 49.0), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(0.0, 41.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //RAM STACK (Fast Constraints)
         Trajectory C4 = drive.trajectoryBuilder(C3.end())
-                .forward(12,
+                .forward(13,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(80, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(80))
-                //.splineTo(new Vector2d (-12.0,35.0), Math.toRadians(180))
                 .build();
 
         //INTAKE STACK (Slow Constraints)
@@ -252,7 +243,7 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, 38.0, Math.toRadians(-3.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-3.0, 40.0, Math.toRadians(-3.0)), Math.toRadians(180))
                 .build();
 
         //PARK
@@ -261,21 +252,15 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .build();
 
         // AUTO CASE STATEMENT
-
         switch (state) {
             case ZERO:
                 telemetry.addData("Stack:", "ZERO");
                 telemetry.update();
 
-              //  robot.intake.setPower(0.8);
-              //  sleep(500);
-              //  robot.intake.setPower(0.0);
-
                 //SET SERVOS
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-             //   robot.emergency_servo.setPosition(emergency_open);
 
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
@@ -336,15 +321,10 @@ public class FullAutoBERSERK extends LinearOpMode {
                 telemetry.addData("Stack:", "ONE");
                 telemetry.update();
 
-                robot.intake.setPower(0.8);
-                sleep(500);
-                robot.intake.setPower(0.0);
-
                 //SET SERVOS
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-             //   robot.emergency_servo.setPosition(emergency_open);
 
                 //SHOOT POSITION
                 drive.followTrajectory(B1);
@@ -390,7 +370,6 @@ public class FullAutoBERSERK extends LinearOpMode {
                 drive.followTrajectory(B4);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                // ((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
 
                 //SHOOT X 1
                 sleep(3000);
@@ -420,15 +399,10 @@ public class FullAutoBERSERK extends LinearOpMode {
                 telemetry.addData("Stack:", "FOUR");
                 telemetry.update();
 
-                robot.intake.setPower(0.8);
-                sleep(500);
-                robot.intake.setPower(0.0);
-
                 //SET SERVOS
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-             //   robot.emergency_servo.setPosition(emergency_open);
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -480,7 +454,6 @@ public class FullAutoBERSERK extends LinearOpMode {
                 drive.followTrajectory(C5);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                //((DcMotorEx) robot.shooter2).setVelocity(((DcMotorEx) robot.shooter1).getVelocity());
 
                 //SHOOT POSITION
                 drive.followTrajectory(C6);

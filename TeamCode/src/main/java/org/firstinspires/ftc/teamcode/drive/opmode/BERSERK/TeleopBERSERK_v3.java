@@ -106,8 +106,8 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
         //Miscellaneous
         long shootWait = 150;
-        double turn_right = -7;
-        double turn_left = 12;
+        double turn_right = -5;
+        double turn_left = 5;
 
         //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
@@ -171,7 +171,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
             //Shooter
             if (gamepad1.a || gamepad2.a) {
-                targetVelo = 1700; //1800
+                targetVelo = 1800; //1700
             }
             else if (gamepad1.b || gamepad2.b) {
                 targetVelo = 0;
@@ -258,7 +258,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
             switch (currentMode) {
                 case NORMAL_CONTROL:
                     // Switch to align to point if gamepad1 left trigger is activated
-                    if (Math.abs(gamepad1.left_trigger) >= 0.5) {
+                    if (Math.abs(gamepad1.left_trigger) >= 0.4) {
                         currentMode = Mode.ALIGN_TO_POINT;
                     }
 
@@ -275,7 +275,7 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
                 case ALIGN_TO_POINT:
                     // Switch to normal control if gamepad1 right trigger is activated
-                    if (Math.abs(gamepad1.right_trigger) >= 0.5) {
+                    if (Math.abs(gamepad1.right_trigger) >= 0.4) {
                         currentMode = Mode.NORMAL_CONTROL;
                     }
 
