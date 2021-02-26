@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //@Config
 @TeleOp(group = "BERSERK")
-public class TeleopBERSERK_v3 extends LinearOpMode {
+public class TeleopBERSERK_v3_Locked_Aim extends LinearOpMode {
 
     //public static double DRAWING_TARGET_RADIUS = 2;
     public static double DRAWING_TARGET_RADIUS = 1;
@@ -108,6 +108,9 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
         long shootWait = 150;
         double turn_right = -8;
         double turn_left = 8;
+
+        //AutoAim
+        double shooter_heading = 0;
 
         //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
@@ -205,10 +208,10 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
 
             //Flap Manual Offset
             if (gamepad1.dpad_up) {
-                launch_angle_offset += -0.00025;
+                launch_angle_offset += -0.0003;
             }
             else if (gamepad1.dpad_down) {
-                launch_angle_offset += 0.00025;
+                launch_angle_offset += 0.0003;
             }
 
             // Y prepares for endgame by dropping flap and powering up shooter
@@ -217,12 +220,12 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                 launch_angle_offset = 0.2;
             }
 
-            //Powershot Turns
+            //Heading Turn
             if (gamepad1.dpad_left) {
-                drive.turn(Math.toRadians(turn_left));
+                shooter_heading += -4;
             }
             else if (gamepad1.dpad_right) {
-                drive.turn(Math.toRadians(turn_right));
+                shooter_heading += 4;
             }
 
             //Wobble Arm
@@ -288,7 +291,8 @@ public class TeleopBERSERK_v3 extends LinearOpMode {
                     );
                     Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
                     Vector2d difference = targetPosition.minus(poseEstimate.vec());
-                    double theta = difference.angle();
+                    //double theta = difference.angle();
+                    double theta = shooter_heading;
                     double thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
                     headingController.setTargetPosition(theta);
 

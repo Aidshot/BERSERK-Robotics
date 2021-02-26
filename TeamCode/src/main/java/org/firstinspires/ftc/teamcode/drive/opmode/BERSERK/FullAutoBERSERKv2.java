@@ -10,23 +10,24 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.openftc.easyopencv.*;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 import java.util.Arrays;
 
-import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.*;
-import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Height.*;
+import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class FullAutoBERSERK extends LinearOpMode {
+public class FullAutoBERSERKv2 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -104,6 +105,7 @@ public class FullAutoBERSERK extends LinearOpMode {
                     state = State.FOUR;
                     break;
             }
+
         }
 
         waitForStart();
@@ -401,89 +403,8 @@ public class FullAutoBERSERK extends LinearOpMode {
                 //SET SERVOS
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(launch_angle);
+                robot.flap.setPosition(0.2);
 
-                //SHOOT POSITION
-                drive.followTrajectory(C1);
-
-                //SHOOT x 3
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                //TURN OFF SHOOTER
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
-
-                //WOBBLE C POSITION
-                drive.followTrajectory(C2);
-
-                //DROP WOBBLE 1
-                robot.wobble_lift.setPosition(wobble_down);
-                sleep(400);
-                robot.wobble_claw.setPosition(wobble_open);
-                sleep(200);
-
-                //MOVE TOWARDS STACK
-                drive.followTrajectory(C3);
-
-                robot.wobble_lift.setPosition(wobble_up);
-
-                robot.intake.setPower(0.8);
-                robot.feeder_turn.setPower(1);
-
-                //RAM STACK
-                drive.followTrajectory(C4);
-
-                sleep(500);
-
-                //INTAKE STACK
-                drive.followTrajectory(C5);
-
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-
-                //SHOOT POSITION
-                drive.followTrajectory(C6);
-
-                sleep(3000);
-
-                //SHOOT X 3
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                //TURN OFF INTAKE AND SHOOTER
-                robot.intake.setPower(0);
-                robot.feeder_turn.setPower(0);
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
-
-                //PARK
-                drive.followTrajectory(C7);
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
 

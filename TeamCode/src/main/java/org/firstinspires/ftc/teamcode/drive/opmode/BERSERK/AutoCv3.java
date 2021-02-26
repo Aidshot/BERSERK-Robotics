@@ -90,7 +90,7 @@ public class AutoCv3 extends LinearOpMode {
                 .addSpatialMarker(new Vector2d(-5, 2), () -> {
                     robot.kicker.setPosition(kicker_in);
                 })
-                .addSpatialMarker(new Vector2d(-5, -2), () -> {
+                .addSpatialMarker(new Vector2d(-5, -1), () -> {
                     robot.kicker.setPosition(kicker_out);
                 })
 
@@ -158,10 +158,6 @@ public class AutoCv3 extends LinearOpMode {
         // C AUTO //
         telemetry.addData("Stack:", "FOUR");
         telemetry.update();
-
-        robot.intake.setPower(0.8);
-        sleep(500);
-        robot.intake.setPower(0.0);
 
         //SET SERVOS
         robot.wobble_lift.setPosition(wobble_up);
