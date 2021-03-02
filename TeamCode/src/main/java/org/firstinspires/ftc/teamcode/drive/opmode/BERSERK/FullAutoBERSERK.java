@@ -53,7 +53,7 @@ public class FullAutoBERSERK extends LinearOpMode {
         HardwareBERSERK robot    = new HardwareBERSERK();
         robot.init(hardwareMap);
 
-        double shooter_target_velo = 1840;
+        double shooter_target_velo = 1810;
         double launch_angle = 0.178; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.2;
@@ -61,7 +61,7 @@ public class FullAutoBERSERK extends LinearOpMode {
         double wobble_open = 0.6;
         double wobble_up = 0.6;
         double wobble_down = 0.2;
-        long shootWait = 380;
+        long shootWait = 400;
         double webcam_right = 0.3;
 
         robot.webcam_servo.setPosition(webcam_right);
@@ -131,26 +131,31 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(5.0, 55.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TO WOBBLE 2
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(80))
+                .strafeRight(10)
+             //   .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(80))
+             //   .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(-10))
+                .splineTo(new Vector2d(-20.0, 24.0),Math.toRadians(350))
                 .addTemporalMarker(2.0, () -> {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
-                .splineToConstantHeading(new Vector2d(-42, 23.0),Math.toRadians(80),
+              //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
+                .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
+                              //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(12, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToLinearHeading(new Pose2d(10.0, 47.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(10.0, 45.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
@@ -171,12 +176,12 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 })
-                .splineTo(new Vector2d(-3.0, 39.0), Math.toRadians(-3.0))
+                .splineTo(new Vector2d(-3.0, 40.0), Math.toRadians(-3.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(15.0, 38.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(30.0, 38.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -186,12 +191,16 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory B4 = drive.trajectoryBuilder(B3.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, 39.0, Math.toRadians(-3.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-3.0, 40.0, Math.toRadians(-4.0)), Math.toRadians(180))
                 .build();
 
         //PARK
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
                 .forward(9)
+                .build();
+
+        Trajectory B6 = drive.trajectoryBuilder(B5.end())
+                .strafeRight(20)
                 .build();
 
         //   C AUTO TRAJECTORIES   //
@@ -207,7 +216,7 @@ public class FullAutoBERSERK extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 })
-                .splineTo(new Vector2d(-3.0, 40.0), Math.toRadians(-3.0))
+                .splineTo(new Vector2d(-3.0, 43.0), Math.toRadians(-3.0))
                 .build();
 
         //WOBBLE C POSITION
@@ -232,10 +241,10 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //INTAKE STACK (Slow Constraints)
         Trajectory C5 = drive.trajectoryBuilder(C4.end())
-                .forward(10,
+                .forward(11,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(5, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(4, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
@@ -310,6 +319,8 @@ public class FullAutoBERSERK extends LinearOpMode {
                 sleep(700);
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(200);
+
+                PoseStorage.currentPose = drive.getPoseEstimate();
 
                 drive.followTrajectory(A5);
 
@@ -387,6 +398,7 @@ public class FullAutoBERSERK extends LinearOpMode {
 
                 //PARK
                 drive.followTrajectory(B5);
+                drive.followTrajectory(B6);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
