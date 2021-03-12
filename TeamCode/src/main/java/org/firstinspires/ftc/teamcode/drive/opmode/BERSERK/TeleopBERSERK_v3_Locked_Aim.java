@@ -183,7 +183,7 @@ public class TeleopBERSERK_v3_Locked_Aim extends LinearOpMode {
 
             //Shooter
             if (gamepad1.a || gamepad2.a) {
-                targetVelo = 1775; //1700
+                targetVelo = 1760; //1700
             }
             else if (gamepad1.b || gamepad2.b) {
                 targetVelo = 0;

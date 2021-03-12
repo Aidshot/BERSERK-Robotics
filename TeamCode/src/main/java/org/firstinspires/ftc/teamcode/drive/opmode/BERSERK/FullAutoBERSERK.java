@@ -53,7 +53,7 @@ public class FullAutoBERSERK extends LinearOpMode {
         HardwareBERSERK robot    = new HardwareBERSERK();
         robot.init(hardwareMap);
 
-        double shooter_target_velo = 1810;
+        double shooter_target_velo = 1830;
         double launch_angle = 0.178; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.2;
@@ -191,7 +191,7 @@ public class FullAutoBERSERK extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory B4 = drive.trajectoryBuilder(B3.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, 40.0, Math.toRadians(-4.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-3.0, 42.0, Math.toRadians(-4.0)), Math.toRadians(180))
                 .build();
 
         //PARK
