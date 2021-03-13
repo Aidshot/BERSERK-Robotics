@@ -314,6 +314,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
 
                 drive.followTrajectory(A3);
 
+                //GRAB WOBBLE 1
                 robot.wobble_claw.setPosition(wobble_close);
                 sleep(700);
                 robot.wobble_lift.setPosition(wobble_up);

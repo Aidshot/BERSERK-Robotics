@@ -49,23 +49,21 @@ public class AutoCv2 extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        //DROP WOBBLE C
+        //Drop Wobble 1
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-30.0, 55.0), Math.toRadians(0.0))
-                .splineTo(new Vector2d(55.0, 50.0), Math.toRadians(0.0))
+                .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .splineTo(new Vector2d(57.0, 55.0), Math.toRadians(0.0))
                 .build();
 
-        //SHOOT POWERSHOTS AND GRAB WOBBLE 2
+        //Shoot Powershots
         Trajectory C2 = drive.trajectoryBuilder(C1.end(),true)
-                .splineToConstantHeading(new Vector2d(-5.0, 18.0), Math.toRadians(-90.0))
-                .splineToConstantHeading(new Vector2d(-5.0, 18.0), Math.toRadians(-90.0))
-                .splineToSplineHeading(new Pose2d(-5.0, 18.0, Math.toRadians(45)), Math.toRadians(140.0))
-                .splineToLinearHeading(new Pose2d(-5.0, 18.0, Math.toRadians(45)), Math.toRadians(140.0))
-                .build();
-
-        //STRAFE AND SHOOT
-        Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToConstantHeading(new Vector2d(-5.0, 0.0), Math.toRadians(-90.0))
+                .splineToConstantHeading(new Vector2d(-5.0, 20.0), Math.toRadians(-90.0))
+                .splineToConstantHeading(new Vector2d(-5.0, -2.0), Math.toRadians(-90.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(6, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(6))
 
                 //SHOOT
                 .addTemporalMarker(0.1, () -> {
@@ -91,107 +89,92 @@ public class AutoCv2 extends LinearOpMode {
                     robot.kicker.setPosition(kicker_out);
                 })
 
-                //MOVE TO WOBBLE 2
-                .splineToSplineHeading(new Pose2d (-30.0, 5.0, Math.toRadians(45.0)), Math.toRadians(140.0))
-
-                .splineToSplineHeading(new Pose2d (-35.0, 10.0, Math.toRadians(45.0)), Math.toRadians(140.0),
+                //Pick Up Wobble 2
+                .splineToSplineHeading(new Pose2d(-30.0, 5.0, Math.toRadians(45)), Math.toRadians(140.0))
+                .splineToLinearHeading(new Pose2d(-35.0, 10.0, Math.toRadians(45)), Math.toRadians(140.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(4, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(6, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(4))
+                        ), new ProfileAccelerationConstraint(6))
                 .build();
 
-        //DROP WOBBLE 2
-        Trajectory C4 = drive.trajectoryBuilder(C3.end())
-                .splineToSplineHeading(new Pose2d (55.0, 40.0, Math.toRadians(0.0)), Math.toRadians(0.0))
-                .build();
-
-        //MOVE TOWARDS STACK
-        Trajectory C5 = drive.trajectoryBuilder(C4.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .forward(12,
+        //Intake Stack
+        Trajectory C3 = drive.trajectoryBuilder(C2.end())
+                .splineToSplineHeading( new Pose2d(-28.0, 28.0, Math.toRadians(62.0)), Math.toRadians(62.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(80, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(80))
+                .splineToConstantHeading( new Vector2d(-21.0, 45.0), Math.toRadians(62.0))
                 .build();
 
-        //INTAKE STACK (Slow Constraints)
+        //Drop Wobble
+        Trajectory C4 = drive.trajectoryBuilder(C3.end(),true)
+                .splineToLinearHeading( new Pose2d(52.0, 47.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .build();
+
+        //Shoot
+        Trajectory C5 = drive.trajectoryBuilder(C4.end(),true)
+                .splineToLinearHeading( new Pose2d(-3.0, 40.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .build();
+
+        //Park
         Trajectory C6 = drive.trajectoryBuilder(C5.end())
-                .forward(10,
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(5, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        //SHOOT POSITION
-        Trajectory C7 = drive.trajectoryBuilder(C6.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, 38.0, Math.toRadians(-3.0)), Math.toRadians(180))
-                .build();
-
-        //PARK
-        Trajectory C8 = drive.trajectoryBuilder(C7.end())
-                .forward(5)
+                .splineToLinearHeading(  new Pose2d(6.0,22.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
                 .build();
 
         // C AUTO //
         telemetry.addData("Stack:", "FOUR");
         telemetry.update();
 
-        robot.intake.setPower(0.8);
-        sleep(500);
-        robot.intake.setPower(0.0);
-
         //SET SERVOS
         robot.wobble_lift.setPosition(wobble_up);
         robot.wobble_claw.setPosition(wobble_close);
-        launch_angle= 0.2;
         robot.flap.setPosition(launch_angle);
+       // ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
-        //Drop Wobble 1
+        //WOBBLE C ZONE
         drive.followTrajectory(C1);
+        ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
+        //DROP WOBBLE 1
         robot.wobble_lift.setPosition(wobble_down);
         sleep(400);
         robot.wobble_claw.setPosition(wobble_open);
-        sleep(200);
+        sleep(300);
+        robot.wobble_lift.setPosition(wobble_up);
 
-        //Move to Powershots
+        //SHOOT POWERSHOTS AND PICKUP WOBBLE
         drive.followTrajectory(C2);
-        //Strafe and Shoot
+
+        robot.wobble_claw.setPosition(wobble_close);
+        sleep(700);
+        robot.wobble_lift.setPosition(wobble_up);
+        ((DcMotorEx) robot.shooter2).setVelocity(0);
+
+        //INTAKE STACK
+        robot.intake.setPower(0.8);
+        robot.feeder_turn.setPower(1);
         drive.followTrajectory(C3);
 
-        //Pick up Wobble 2
-        robot.wobble_claw.setPosition(wobble_close);
-        sleep(800);
-        robot.wobble_lift.setPosition(wobble_up);
-        sleep(800);
-
-        //Drop Wobble 2
+        //DROP WOBBLE
         drive.followTrajectory(C4);
 
+        //DROP WOBBLE 2
         robot.wobble_lift.setPosition(wobble_down);
         sleep(400);
         robot.wobble_claw.setPosition(wobble_open);
         sleep(200);
 
+        ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+
+        //SHOOT POSITION
         drive.followTrajectory(C5);
 
-        robot.wobble_claw.setPosition(wobble_close);
-        robot.wobble_lift.setPosition(wobble_up);
-
-        drive.followTrajectory(C6);
-
-        launch_angle= 0.178;
-        robot.flap.setPosition(launch_angle);
-
-        drive.followTrajectory(C7);
-
         //SHOOT x 3
+        sleep(shootWait);
         robot.kicker.setPosition(kicker_out);
         sleep(shootWait);
         robot.kicker.setPosition(kicker_in);
@@ -208,6 +191,14 @@ public class AutoCv2 extends LinearOpMode {
         sleep(shootWait);
         robot.kicker.setPosition(kicker_out);
 
-        drive.followTrajectory(C8);
+        //TURN OFF SHOOTER
+        ((DcMotorEx) robot.shooter1).setVelocity(0);
+        ((DcMotorEx) robot.shooter2).setVelocity(0);
+
+        //PARK
+        drive.followTrajectory(C6);
+        PoseStorage.currentPose = drive.getPoseEstimate();
+
+
     }
 }
