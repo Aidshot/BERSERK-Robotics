@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //@Config
 @TeleOp(group = "BERSERK")
-public class TeleopBERSERK_v3_Locked_Aim extends LinearOpMode {
+public class TeleopBERSERK_v4 extends LinearOpMode {
 
     //public static double DRAWING_TARGET_RADIUS = 2;
     public static double DRAWING_TARGET_RADIUS = 1;
