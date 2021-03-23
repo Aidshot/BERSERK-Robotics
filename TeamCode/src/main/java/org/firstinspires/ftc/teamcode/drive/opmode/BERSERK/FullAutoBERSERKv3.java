@@ -27,7 +27,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class FullAutoBERSERKv2 extends LinearOpMode {
+public class FullAutoBERSERKv3 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -57,11 +57,11 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
         double shooter_target_velo = 1830;
         double launch_angle = 0.178; //0.173
         double kicker_out = 0.7;
-        double kicker_in = 0.2;
+        double kicker_in = 0.25; //.2
         double wobble_close = 0.18;
         double wobble_open = 0.6;
         double wobble_up = 0.6;
-        double wobble_down = 0.25; //0.2
+        double wobble_down = 0.2;
         long shootWait = 300;
         double webcam_right = 0.3;
 
@@ -124,7 +124,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, 42.0), Math.toRadians(-2.0))
+                .splineTo(new Vector2d(-3.0, 42.0), Math.toRadians(0.0))
                 .build();
 
         //WOBBLE A POSITION
@@ -142,7 +142,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
               //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
-                .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
+                .splineToConstantHeading(new Vector2d(-38, 25.0),Math.toRadians(80),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                               //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
@@ -171,7 +171,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, 44.0), Math.toRadians(-3.0))
+                .splineTo(new Vector2d(-3.0, 44.0), Math.toRadians(0.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -188,8 +188,8 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
         Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
                 .strafeRight(5)
                 .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .splineToSplineHeading( new Pose2d(-35.0, 30.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
-                .splineToConstantHeading( new Vector2d(-41.0, 28.0), Math.toRadians(100),
+                .splineToSplineHeading( new Pose2d(-35.0, 30.0, Math.toRadians(135.0)), Math.toRadians(180))
+                .splineToConstantHeading( new Vector2d(-40.0, 28.0), Math.toRadians(100),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(8, DriveConstants.TRACK_WIDTH)
@@ -199,12 +199,12 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-6.0,44.0, Math.toRadians(-3.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-6.0,44.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
         Trajectory B6 = drive.trajectoryBuilder(B5.end())
-                .splineToLinearHeading( new Pose2d(18.0, 43.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(18.0, 45.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
@@ -222,7 +222,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, 43.0), Math.toRadians(-3.0))
+                .splineTo(new Vector2d(-3.0, 43.0), Math.toRadians(0.0))
                 .build();
 
         //WOBBLE C POSITION
@@ -257,7 +257,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(-5.0, 40.0, Math.toRadians(-3.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-6.0, 40.0, Math.toRadians(0.0)), Math.toRadians(180))
                 .build();
 
         //PARK
