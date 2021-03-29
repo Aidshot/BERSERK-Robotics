@@ -29,7 +29,9 @@
 
 package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -65,6 +67,8 @@ public class HardwareBERSERK
     public Servo webcam_servo   = null;
     public CRServo feeder_turn    = null;
     public CRServo foldout_lift    = null;
+    public ColorSensor color_sensor = null;
+    public RevBlinkinLedDriver blinkinLedDriver = null;
 
     public static final double NEW_P = 2.5;
     public static final double NEW_I = 0.1;
@@ -114,6 +118,8 @@ public class HardwareBERSERK
         feeder_turn = hwMap.get(CRServo.class, "feeder_turn");
         webcam_servo = hwMap.get(Servo.class, "webcam_servo");
         foldout_lift = hwMap.get(CRServo.class, "foldout_lift");
+        color_sensor = hwMap.get(ColorSensor.class, "color_sensor");
+        blinkinLedDriver = hwMap.get(RevBlinkinLedDriver.class, "blinkin");
 
     }
  }

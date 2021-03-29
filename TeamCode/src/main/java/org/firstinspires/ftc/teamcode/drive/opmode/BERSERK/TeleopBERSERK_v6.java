@@ -7,27 +7,37 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
+import java.util.Arrays;
+
 //Teleop utilizes Align to point and Shooter Velocity PID Control
 
 //@Config
 @TeleOp(group = "BERSERK")
-public class TeleopBERSERK_v5 extends LinearOpMode {
+public class TeleopBERSERK_v6 extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
 
     enum Mode {
         NORMAL_CONTROL,
+        AUTO_POWERSHOT,
         ALIGN_TO_POINT
     }
 
@@ -42,8 +52,10 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
     private Mode currentMode = Mode.NORMAL_CONTROL;
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 
+    RevBlinkinLedDriver.BlinkinPattern pattern;
+
     //Target Position of TowerGoal
-    private Vector2d targetPosition = new Vector2d(72, 36);
+    private Vector2d targetPosition = new Vector2d(72, 37);
 
     //Shooter Velocity PID
     public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.003, 0, 0);
@@ -57,9 +69,12 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
     private final ElapsedTime veloTimer = new ElapsedTime();
     private final ElapsedTime shooterTimer = new ElapsedTime();
     private final ElapsedTime alignTimer = new ElapsedTime();
+    private final ElapsedTime ringTimer = new ElapsedTime();
+    private final ElapsedTime ringTimer2 = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         //Initializations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         HardwareBERSERK robot       = new HardwareBERSERK();
@@ -79,23 +94,22 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        //Start Pose from PoseStorage
+        //Start Pose from PoseStorage      Left tape: (new Pose2d(-63,50));
         drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
-
-        //Start Pose from left starting position
-        //drive.getLocalizer().setPoseEstimate(new Pose2d(-63,50));
-
         headingController.setInputBounds(-Math.PI, Math.PI);
+
+        pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        robot.blinkinLedDriver.setPattern(pattern);
 
         waitForStart();
 
         ////VARIABLES\\\\\
 
         //Flap
-        double launch_angle = 0.174;
+        double launch_angle = 0.121;
         double launch_angle_offset = 0;
-        double max_launch_angle = 0.2;
-        double min_launch_angle = 0.113;
+        double max_launch_angle = 0.174;
+        double min_launch_angle = 0.09;
 
         //Kicker
         double kicker_out = 0.68;
@@ -112,6 +126,9 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
         //Initial Shooter Velocity
         double targetVelo = 0;
         double targetVelo_offset= 0;
+
+        //Ring Counter
+        boolean ringState = false;
 
         //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
@@ -183,19 +200,6 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
             //Distance to Tower
             double getDistance = Math.sqrt(Math.pow(targetPosition.getX() - poseEstimate.getX(), 2) + Math.pow(targetPosition.getY() - poseEstimate.getY(), 2));
 
-            //Automatic Flap Adjustment
-            if (90 >= getDistance && getDistance >= 50) {
-                launch_angle = 0.174;
-            } else if (110 >= getDistance && getDistance >= 90) {
-                launch_angle = 0.172;
-            } else if (130 >= getDistance && getDistance >= 110) {
-                launch_angle = 0.170;
-            } else if (140 >= getDistance && getDistance >= 130) {
-                launch_angle = 0.166;
-            } else if (150 >= getDistance && getDistance >= 140) {
-                launch_angle = 0.160;
-            }
-
             //Backwall= 133 in, Shooting Spot= 74 in
 
             //Flap Set Position
@@ -206,13 +210,21 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
                 launch_angle_offset += -0.00013;
             } else if (gamepad1.dpad_down) {
                 launch_angle_offset += 0.00013;
+            } else if (gamepad1.dpad_right) {
+                launch_angle_offset = 0.0;
+            }
+
+            if (gamepad1.dpad_right) {
+                launch_angle = 0.121;
+            } else if (gamepad1.dpad_left) {
+                launch_angle = 0.147;
             }
 
             // Y prepares for endgame by dropping flap and powering up shooter
             if (gamepad1.y) {
                 targetVelo = 1700;
                 targetVelo_offset = 0;
-                launch_angle_offset = 0.2;
+                launch_angle_offset = 0.174;
             }
 
             //Wobble Arm
@@ -226,11 +238,36 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_close);
             }
 
+            //Fold-Out Lift
+            if (gamepad2.right_stick_y < 0) {
+                robot.foldout_lift.setPower(1);
+            }
+            else if (gamepad2.right_stick_y > 0) {
+                robot.foldout_lift.setPower(-1);
+            }
+            else robot.foldout_lift.setPower(0);
+
+            //Turn LEDS blue when no ring is present & LEDs haven't changed in 1 sec & if gamepad x is not being pressed
+            if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1 && !gamepad1.x){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                robot.blinkinLedDriver.setPattern(pattern);
+                ringTimer2.reset();
+            }
+
+            //Turn LEDS red when  ring is present & LEDs haven't changed in 1 sec
+            if(robot.color_sensor.alpha() > 80 && ringTimer2.seconds() > 1 ) { //150
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                robot.blinkinLedDriver.setPattern(pattern);
+                ringTimer.reset();
+            }
+
             switch(shooterState){
                 case RESTING:
                     if(gamepad1.x){
                         shooterTimer.reset();
                         shooterState = ShooterState.FLICKING;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+                        robot.blinkinLedDriver.setPattern(pattern);
                     }
                     break;
                 case FLICKING:
@@ -249,30 +286,38 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
 
             robot.kicker.setPosition(shooterState == ShooterState.FLICKING ? kicker_in : kicker_out);
 
-            //Fold-Out Lift
-            if (gamepad2.right_stick_y < 0) {
-                robot.foldout_lift.setPower(1);
-            }
-            else if (gamepad2.right_stick_y > 0) {
-                robot.foldout_lift.setPower(-1);
-            }
-            else robot.foldout_lift.setPower(0);
-
             // MODE SWITCH \\
             switch (currentMode) {
-                case NORMAL_CONTROL: // Switch to align to point if gamepad1 left trigger is activated
-                    if (Math.abs(gamepad1.left_trigger) >= 0.2) {
-                        currentMode = Mode.ALIGN_TO_POINT;
-                    }
+                case NORMAL_CONTROL:
 
+                    //Normal Robot Control
                     driveDirection = new Pose2d(
                             Math.signum(ly) * ly * ly * 0.8,
                             Math.signum(lx) * lx * lx * 0.8,
                             Math.signum(rx) * rx * rx * 0.8
                     );
+
+                    // Switch to align to point if gamepad1 left trigger is activated
+                    if (Math.abs(gamepad1.left_trigger) >= 0.2) {
+                        currentMode = Mode.ALIGN_TO_POINT;
+                    }
+                    break;
+
+                case AUTO_POWERSHOT:
+
+                    // If x is pressed, we break out of the automatic following
+                    if (gamepad1.dpad_right) {
+                        drive.cancelFollowing();
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+                    // If drive finishes its task, cede control to the driver
+                    if (!drive.isBusy()) {
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
                     break;
 
                 case ALIGN_TO_POINT: // Switch to normal control if gamepad1 right trigger is activated
+
                     alignTimer.reset();
                     if (Math.abs(gamepad1.right_trigger) >= 0.2) {
                     //if (alignTimer.milliseconds() > 1000) {
@@ -311,7 +356,7 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
                     break;
             }
 
-            //Align to Point Dashboard View
+            //Dashboard View
             fieldOverlay.setStroke("#3F51B5");
             DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
             drive.setWeightedDrivePower(driveDirection);
@@ -319,18 +364,20 @@ public class TeleopBERSERK_v5 extends LinearOpMode {
             drive.getLocalizer().update();
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-            //DS Telemetry
-            telemetry.addData("Flywheel", motorVelo);
-            telemetry.addData("Distance", getDistance);
+            //Driver Station Telemetry
+            
+            //telemetry.addData("Alpha", robot.color_sensor.alpha());
+            telemetry.addData("mode", currentMode);
             telemetry.addData("launch angle", launch_angle+launch_angle_offset);
+            telemetry.addData("Distance", getDistance);
+            telemetry.addData("Flywheel", motorVelo);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("mode", currentMode);
             telemetry.update();
 
             //Dashboard Telemetry
-            packet.put("FlyWheel Velocity", motorVelo);
+          //  packet.put("FlyWheel Velocity", motorVelo);
             dashboard.sendTelemetryPacket(packet);
         }
     }

@@ -10,9 +10,11 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -54,14 +56,18 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
         HardwareBERSERK robot    = new HardwareBERSERK();
         robot.init(hardwareMap);
 
+        RevBlinkinLedDriver.BlinkinPattern pattern;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        robot.blinkinLedDriver.setPattern(pattern);
+
         double shooter_target_velo = 1830;
-        double launch_angle = 0.178; //0.173
+        double launch_angle = 0.121; //0.173
         double kicker_out = 0.7;
-        double kicker_in = 0.2;
+        double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
         double wobble_up = 0.6;
-        double wobble_down = 0.25; //0.2
+        double wobble_down = 0.2;
         long shootWait = 300;
         double webcam_right = 0.3;
 
@@ -142,7 +148,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
               //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
-                .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
+                .splineToConstantHeading(new Vector2d(-38.5, 25.0),Math.toRadians(80),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                               //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
@@ -189,7 +195,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 .strafeRight(5)
                 .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .splineToSplineHeading( new Pose2d(-35.0, 30.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
-                .splineToConstantHeading( new Vector2d(-41.0, 28.0), Math.toRadians(100),
+                .splineToConstantHeading( new Vector2d(-40.0, 28.0), Math.toRadians(100),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(8, DriveConstants.TRACK_WIDTH)
@@ -247,7 +253,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
 
         //INTAKE STACK (Slow Constraints)
         Trajectory C5 = drive.trajectoryBuilder(C4.end())
-                .forward(11,
+                .forward(9,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(4, DriveConstants.TRACK_WIDTH)
