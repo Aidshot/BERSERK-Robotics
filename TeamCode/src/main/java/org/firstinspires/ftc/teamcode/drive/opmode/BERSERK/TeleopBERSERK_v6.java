@@ -177,7 +177,7 @@ public class TeleopBERSERK_v6 extends LinearOpMode {
 
             //Intake + Indexer
             if (gamepad1.right_bumper) {
-                robot.intake.setPower(0.9);
+                robot.intake.setPower(0.8);
                 robot.feeder_turn.setPower(1);
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);
@@ -186,7 +186,7 @@ public class TeleopBERSERK_v6 extends LinearOpMode {
 
             //Gamepad 2 Right Bumper reverses intake
             if (gamepad2.right_bumper) {
-                robot.intake.setPower(-0.9);
+                robot.intake.setPower(-0.8);
                 robot.feeder_turn.setPower(-1);
             }
 
@@ -248,7 +248,7 @@ public class TeleopBERSERK_v6 extends LinearOpMode {
             else robot.foldout_lift.setPower(0);
 
             //Turn LEDS blue when no ring is present & LEDs haven't changed in 1 sec & if gamepad x is not being pressed
-            if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1 && !gamepad1.x){
+            if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1){
                 pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
                 robot.blinkinLedDriver.setPattern(pattern);
                 ringTimer2.reset();
@@ -266,7 +266,8 @@ public class TeleopBERSERK_v6 extends LinearOpMode {
                     if(gamepad1.x){
                         shooterTimer.reset();
                         shooterState = ShooterState.FLICKING;
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+
+                        //pattern = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
                         robot.blinkinLedDriver.setPattern(pattern);
                     }
                     break;
@@ -292,8 +293,8 @@ public class TeleopBERSERK_v6 extends LinearOpMode {
 
                     //Normal Robot Control
                     driveDirection = new Pose2d(
-                            Math.signum(ly) * ly * ly * 0.8,
-                            Math.signum(lx) * lx * lx * 0.8,
+                            Math.signum(ly) * ly * ly * 0.85,
+                            Math.signum(lx) * lx * lx * 0.85,
                             Math.signum(rx) * rx * rx * 0.8
                     );
 
