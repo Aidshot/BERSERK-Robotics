@@ -12,10 +12,8 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -30,8 +28,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-@Disabled
-public class FullAutoBERSERKv2 extends LinearOpMode {
+public class BLUE_REICHER_AUTO extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -63,7 +60,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
         robot.blinkinLedDriver.setPattern(pattern);
 
         double shooter_target_velo = 1830;
-        double launch_angle = 0.121; //0.173
+        double launch_angle = 0.125; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -140,33 +137,20 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(5.0, 55.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
-        //MOVE TO WOBBLE 2
+        //MOVE OUT OF THE WAY
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .strafeRight(10)
-             //   .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(80))
-             //   .splineTo(new Vector2d(-32.0, 24.0),Math.toRadians(-10))
-                .splineTo(new Vector2d(-20.0, 24.0),Math.toRadians(350))
-                .addTemporalMarker(2.0, () -> {
-                    robot.wobble_lift.setPosition(wobble_down);
-                })
-              //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
-                .splineToConstantHeading(new Vector2d(-38.5, 25.0),Math.toRadians(80),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                              //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
-                                new MecanumVelocityConstraint(12, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        //WOBBLE A POSITION
-        Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToLinearHeading(new Pose2d(10.0, 45.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .back(35)
                 .build();
 
         //PARK
-        Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(25)
+        Trajectory A4 = drive.trajectoryBuilder(A3.end())
+                .splineToSplineHeading(new Pose2d(-30.0, 25.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(10.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(15))
                 .build();
 
         //   B AUTO TRAJECTORIES   //
@@ -319,29 +303,15 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(400);
                 robot.wobble_lift.setPosition(wobble_up);
-
-                drive.followTrajectory(A3);
-
-                //GRAB WOBBLE 1
-                robot.wobble_claw.setPosition(wobble_close);
-                sleep(700);
-                robot.wobble_lift.setPosition(wobble_up);
                 sleep(800);
 
+                drive.followTrajectory(A3);
+                sleep(5000);
                 drive.followTrajectory(A4);
-
-                //DROP WOBBLE 2
-                robot.wobble_lift.setPosition(wobble_down);
-                sleep(700);
-                robot.wobble_claw.setPosition(wobble_open);
-                sleep(200);
-
-                PoseStorage.currentPose = drive.getPoseEstimate();
-
-                drive.followTrajectory(A5);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
+
             case ONE:
                 // B AUTO //
                 telemetry.addData("Stack:", "ONE");

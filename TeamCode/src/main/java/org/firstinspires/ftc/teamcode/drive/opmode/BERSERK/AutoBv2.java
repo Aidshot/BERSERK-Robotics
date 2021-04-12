@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -20,6 +21,7 @@ import java.util.Arrays;
  * This is an example of a more complex path to really test the tuning.
  */
 @Autonomous(group = "drive")
+@Disabled
 public class AutoBv2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

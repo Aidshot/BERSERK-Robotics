@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -28,7 +29,8 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class FullAutoBERSERKv2_5 extends LinearOpMode {
+@Disabled
+public class FullAutoBERSERKv3 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -60,7 +62,7 @@ public class FullAutoBERSERKv2_5 extends LinearOpMode {
         robot.blinkinLedDriver.setPattern(pattern);
 
         double shooter_target_velo = 1830;
-        double launch_angle = 0.121; //0.173
+        double launch_angle = 0.125; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -255,7 +257,7 @@ public class FullAutoBERSERKv2_5 extends LinearOpMode {
                 .forward(9,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(3, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(4, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();

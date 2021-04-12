@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,11 +19,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 //Teleop utilizes Align to point and Shooter Velocity PID Control
 
 //@Config
 @TeleOp(group = "BERSERK")
+@Disabled
 public class TeleopBERSERK_v6_5 extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
@@ -72,8 +75,6 @@ public class TeleopBERSERK_v6_5 extends LinearOpMode {
         HardwareBERSERK robot       = new HardwareBERSERK();
         robot.init(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        TelemetryPacket packet = new TelemetryPacket();
 
         // Motor Setup //
         DcMotorEx myMotor1 = hardwareMap.get(DcMotorEx.class, "shooter1");
@@ -144,6 +145,7 @@ public class TeleopBERSERK_v6_5 extends LinearOpMode {
             Pose2d driveDirection = new Pose2d();
 
             //Initialize FTC Dashboard
+            TelemetryPacket packet = new TelemetryPacket();
             Canvas fieldOverlay = packet.fieldOverlay();
             //TelemetryPacket packet = new TelemetryPacket();
 
@@ -169,7 +171,7 @@ public class TeleopBERSERK_v6_5 extends LinearOpMode {
 
             //Intake + Indexer
             if (gamepad1.right_bumper) {
-                robot.intake.setPower(1);
+                robot.intake.setPower(.80);
                 robot.feeder_turn.setPower(1);
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);
@@ -371,7 +373,6 @@ public class TeleopBERSERK_v6_5 extends LinearOpMode {
 
             //Dashboard Telemetry
           //  packet.put("FlyWheel Velocity", motorVelo);
-            dashboard.sendTelemetryPacket(packet);
         }
     }
 }

@@ -12,10 +12,8 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -30,8 +28,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-@Disabled
-public class FullAutoBERSERKv2 extends LinearOpMode {
+public class BLUE_FULL_AUTO extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -63,7 +60,7 @@ public class FullAutoBERSERKv2 extends LinearOpMode {
         robot.blinkinLedDriver.setPattern(pattern);
 
         double shooter_target_velo = 1830;
-        double launch_angle = 0.121; //0.173
+        double launch_angle = 0.125; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;

@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 //Teleop utilizes Align to point and Shooter Velocity PID Control
 
 //@Config
+@Disabled
 @TeleOp(group = "BERSERK")
 public class TeleopBERSERK_v6 extends LinearOpMode {
 
