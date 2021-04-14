@@ -237,7 +237,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 41.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //RAM STACK (Fast Constraints)

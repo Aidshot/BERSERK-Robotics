@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //@Config
 @TeleOp(group = "BERSERK")
-public class TeleopBERSERK_v8 extends LinearOpMode {
+public class TeleopBERSERK_v8_Fast extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
 
@@ -168,7 +168,7 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
 
             //Intake + Indexer
             if (gamepad1.right_bumper) {
-                robot.intake.setPower(.85);
+                robot.intake.setPower(1);
                 robot.feeder_turn.setPower(1);
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);

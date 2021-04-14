@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -20,7 +21,6 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.HardwareBERSERK;
 import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.PoseStorage;
-import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Tests.BLUE_REICHER_AUTO_B;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -31,7 +31,8 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_REICHER_AUTO extends LinearOpMode {
+@Disabled
+public class BLUE_REICHER_AUTO_B extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -211,7 +212,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(0.0, 41.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //RAM STACK (Fast Constraints)
