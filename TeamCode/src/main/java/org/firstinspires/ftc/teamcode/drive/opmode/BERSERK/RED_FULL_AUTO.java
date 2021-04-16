@@ -67,7 +67,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
         double wobble_open = 0.6;
         double wobble_up = 0.6;
         double wobble_down = 0.2;
-        long shootWait = 300;
+        long shootWait = 330;
         double webcam_right = 0.3;
         double webcam_left = 0.52;
 
@@ -124,13 +124,14 @@ public class RED_FULL_AUTO extends LinearOpMode {
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(-1);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, -40.0), Math.toRadians(3.0))
+                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE A POSITION
@@ -178,7 +179,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, -38.0), Math.toRadians(3.0))
+                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -229,7 +230,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-3.0, -40.0), Math.toRadians(3.0))
+                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE C POSITION

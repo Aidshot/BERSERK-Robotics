@@ -61,6 +61,7 @@ public class HardwareBERSERK
     public DcMotor shooter1       = null;
     public DcMotor shooter2       = null;
     public Servo kicker         = null;
+    public Servo emergency_servo         = null;
     public Servo flap           = null;
     public Servo wobble_lift    = null;
     public Servo wobble_claw    = null;
@@ -112,6 +113,7 @@ public class HardwareBERSERK
 
         // Define and initialize ALL installed servos.
         kicker = hwMap.get(Servo.class, "kicker");
+        emergency_servo = hwMap.get(Servo.class, "emergency_servo");
         wobble_lift = hwMap.get(Servo.class, "wobble_lift");
         wobble_claw = hwMap.get(Servo.class, "wobble_claw");
         flap = hwMap.get(Servo.class, "flap");

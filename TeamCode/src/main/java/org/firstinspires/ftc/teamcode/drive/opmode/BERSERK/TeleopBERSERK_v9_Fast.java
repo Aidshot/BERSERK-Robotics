@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,8 +23,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //@Config
 @TeleOp(group = "BERSERK")
-@Disabled
-public class TeleopBERSERK_v8 extends LinearOpMode {
+public class TeleopBERSERK_v9_Fast extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
 
@@ -41,7 +39,14 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
         DRAWING_BACK
         }
 
+    enum EmergencyServoState {
+        RESTING,
+        FLICKING,
+        DRAWING_BACK
+    }
+
     ShooterState shooterState = ShooterState.RESTING;
+    EmergencyServoState emergencyServoState = EmergencyServoState.RESTING;
 
     private Mode currentMode = Mode.NORMAL_CONTROL;
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
@@ -65,6 +70,7 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
     private final ElapsedTime alignTimer = new ElapsedTime();
     private final ElapsedTime ringTimer = new ElapsedTime();
     private final ElapsedTime ringTimer2 = new ElapsedTime();
+    private final ElapsedTime emergencytimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -107,6 +113,10 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
         double kicker_out = 0.68;
         double kicker_in = 0.4; //0.2 //0.3
 
+        //Emergency Servo
+        double emergency_out = 0.5;
+        double emergency_in = 0.9;
+
         //Wobble Claw
         double wobble_close = 0.18;
         double wobble_open = 0.6;
@@ -118,9 +128,6 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
         //Initial Shooter Velocity
         double targetVelo = 0;
         double targetVelo_offset= 0;
-
-        //Ring Counter
-        boolean ringState = false;
 
         //Set Servos
         robot.wobble_lift.setPosition(wobble_up);
@@ -170,7 +177,7 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
 
             //Intake + Indexer
             if (gamepad1.right_bumper) {
-                robot.intake.setPower(.85);
+                robot.intake.setPower(1);
                 robot.feeder_turn.setPower(1);
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);
@@ -279,6 +286,32 @@ public class TeleopBERSERK_v8 extends LinearOpMode {
             }
 
             robot.kicker.setPosition(shooterState == ShooterState.FLICKING ? kicker_in : kicker_out);
+
+            switch(emergencyServoState){
+                case RESTING:
+                    if(gamepad2.x){
+                        emergencytimer.reset();
+                        emergencyServoState = EmergencyServoState.FLICKING;
+
+                        //pattern = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+                        robot.blinkinLedDriver.setPattern(pattern);
+                    }
+                    break;
+                case FLICKING:
+                    if(emergencytimer.milliseconds() > 300){ //150
+                        emergencytimer.reset();
+                        emergencyServoState = EmergencyServoState.DRAWING_BACK;
+                    }
+                    break;
+                case DRAWING_BACK:
+                    if(emergencytimer.milliseconds() > 300){ //150
+                        emergencytimer.reset();
+                        emergencyServoState = EmergencyServoState.RESTING;
+                    }
+                    break;
+            }
+
+            robot.emergency_servo.setPosition(emergencyServoState == EmergencyServoState.FLICKING ? emergency_in : emergency_out);
 
             // MODE SWITCH \\
             switch (currentMode) {
