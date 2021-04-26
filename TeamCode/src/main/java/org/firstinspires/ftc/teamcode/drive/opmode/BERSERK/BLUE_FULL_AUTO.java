@@ -164,7 +164,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(25)
+                .strafeRight(28)
                 .build();
 
         //   B AUTO TRAJECTORIES   //
@@ -205,7 +205,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-3.0,39.0, Math.toRadians(-3.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-3.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
@@ -215,7 +215,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //PARK
         Trajectory B7 = drive.trajectoryBuilder(B6.end())
-                .splineToLinearHeading( new Pose2d(6.0,22.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+                .splineToLinearHeading( new Pose2d(6.0,16.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
@@ -238,7 +238,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(0.0, 33.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //RAM STACK (Fast Constraints)
@@ -263,7 +263,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(-5.0, 40.0, Math.toRadians(-3.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-5.0, 43.0, Math.toRadians(2.0)), Math.toRadians(180))
                 .build();
 
         //PARK
@@ -333,6 +333,7 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
                 sleep(700);
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(200);
+                robot.wobble_lift.setPosition(wobble_up);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
 
@@ -403,6 +404,12 @@ public class BLUE_FULL_AUTO extends LinearOpMode {
 
                 //SHOOT X 1
                 sleep(1500);
+
+                robot.kicker.setPosition(kicker_out);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);

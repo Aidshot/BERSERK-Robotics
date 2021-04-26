@@ -149,7 +149,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
                 .splineToSplineHeading(new Pose2d(-30.0, 25.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0),
+                .splineToSplineHeading(new Pose2d(10.0, 10.0, Math.toRadians(0.0)), Math.toRadians(0.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
@@ -179,7 +179,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
         Trajectory B3 = drive.trajectoryBuilder(B2.end(),true)
                 .strafeRight(5)
                 .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .splineToSplineHeading( new Pose2d(-3.0,39.0, Math.toRadians(1.0)), Math.toRadians(0.0),
+                .splineToSplineHeading( new Pose2d(-7.0,47.0, Math.toRadians(-3.0)), Math.toRadians(0.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
@@ -212,7 +212,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
 
         //MOVE TOWARDS STACK
         Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 38.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToLinearHeading(new Pose2d(0.0, 33.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .build();
 
         //RAM STACK (Fast Constraints)
@@ -237,7 +237,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToSplineHeading( new Pose2d(-5.0, 40.0, Math.toRadians(-3.0)), Math.toRadians(180))
+                .splineToSplineHeading( new Pose2d(-5.0, 41.0, Math.toRadians(2.0)), Math.toRadians(180))
                 .build();
 
         //PARK
@@ -358,8 +358,14 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 drive.followTrajectory(B3);
 
-                //SHOOT X 1
+                //SHOOT X 2
                 sleep(2000);
+
+                robot.kicker.setPosition(kicker_out);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -421,12 +427,11 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_down);
                 sleep(400);
                 robot.wobble_claw.setPosition(wobble_open);
-                sleep(200);
+                sleep(300);
+                robot.wobble_lift.setPosition(wobble_up);
 
                 //MOVE TOWARDS STACK
                 drive.followTrajectory(C3);
-
-                robot.wobble_lift.setPosition(wobble_up);
 
                 robot.intake.setPower(0.8);
                 robot.feeder_turn.setPower(1);

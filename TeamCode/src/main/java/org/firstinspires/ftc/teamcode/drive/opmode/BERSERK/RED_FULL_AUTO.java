@@ -131,7 +131,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
+                .splineTo(new Vector2d(-5.0, -37.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE A POSITION
@@ -149,7 +149,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
               //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
-                .splineToConstantHeading(new Vector2d(-38.5, -25.0),Math.toRadians(100),
+                .splineToConstantHeading(new Vector2d(-38.5, -22.0),Math.toRadians(100),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                               //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
@@ -165,7 +165,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(25)
+                .strafeRight(29)
                 //.splineTo(new Vector2d(10.0, -25.0), Math.toRadians(0.0))
                 .build();
 
@@ -179,7 +179,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
+                .splineTo(new Vector2d(-5.0, -38.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -207,7 +207,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-3.0,-37.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-5.0,-37.0, Math.toRadians(2.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
@@ -230,7 +230,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
+                .splineTo(new Vector2d(-5.0, -36.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE C POSITION
@@ -248,9 +248,9 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .forward(12,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(80, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(70))
+                        ), new ProfileAccelerationConstraint(80))
                 .build();
 
         //INTAKE STACK (Slow Constraints)
@@ -265,12 +265,12 @@ public class RED_FULL_AUTO extends LinearOpMode {
 
         //SHOOT POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(-3.0, -39.0, Math.toRadians(0.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(-5.0, -36.0, Math.toRadians(2.0)), Math.toRadians(180))
                 .build();
 
         //PARK
         Trajectory C7 = drive.trajectoryBuilder(C6.end())
-                .forward(15)
+                .forward(12)
                 .build();
 
         // AUTO CASE STATEMENT
@@ -334,6 +334,8 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_down);
                 sleep(700);
                 robot.wobble_claw.setPosition(wobble_open);
+                sleep(200);
+                robot.wobble_lift.setPosition(wobble_up);
                 sleep(200);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
@@ -409,6 +411,12 @@ public class RED_FULL_AUTO extends LinearOpMode {
 
                 //SHOOT X 1
                 sleep(1500);
+
+                robot.kicker.setPosition(kicker_out);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
