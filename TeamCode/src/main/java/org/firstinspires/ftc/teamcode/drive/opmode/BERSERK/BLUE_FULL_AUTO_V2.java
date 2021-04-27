@@ -223,7 +223,7 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(-38.0, 38.0), Math.toRadians(-90.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.foldout_lift.setPower(-1);
+                   // robot.foldout_lift.setPower(-1);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
@@ -232,23 +232,65 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
 
         //INTAKE FIRST 2
         Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .forward(10)
+                .forward(5)
                 .build();
 
         //INTAKE SECOND 2
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(10)
+                .forward(5)
                 .build();
 
         //WOBBLE C POSITION
-        Trajectory C4 = drive.trajectoryBuilder(C3.end())
-                .splineToConstantHeading(new Vector2d(52.0, 49.0), Math.toRadians(0.0))
-                .build();
+     //   Trajectory C4 = drive.trajectoryBuilder(C3.end())
+     //           .build();
 
         //PICK UP WOBBLE 2
-        Trajectory C5 = drive.trajectoryBuilder(C4.end(),true)
-                .splineToSplineHeading( new Pose2d(-35.0, 30.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
-                .splineToConstantHeading( new Vector2d(-42.0, 29.0), Math.toRadians(100),
+        Trajectory C5 = drive.trajectoryBuilder(C3.end())
+
+                //Approach Zone C
+                .splineToSplineHeading( new Pose2d(42.0, 50.0, Math.toRadians(0)), Math.toRadians(0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
+
+                //Lower Wobble Arm
+                .addSpatialMarker(new Vector2d(30, 50), () -> {
+                    robot.wobble_lift.setPosition(wobble_down);
+                })
+
+                //Pass Zone C
+                .splineToSplineHeading( new Pose2d(52.0, 50.0, Math.toRadians(0)), Math.toRadians(0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(6, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(6))
+
+                //Open Wobble Claw
+                .addSpatialMarker(new Vector2d(52, 48), () -> {
+                    robot.wobble_claw.setPosition(wobble_open);
+                })
+
+                //Approach Wobble 2
+                .splineToSplineHeading( new Pose2d(20.0, 25.0, Math.toRadians(90)), Math.toRadians(180),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
+
+                //Continue to Approach Wobble 2
+                .splineToSplineHeading( new Pose2d(-20.0, 25.0, Math.toRadians(90)), Math.toRadians(180),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
+
+                //Slow and Grab Wobble 2
+                .splineToSplineHeading( new Pose2d(-32.0, 25.0, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(8, DriveConstants.TRACK_WIDTH)
@@ -258,12 +300,22 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
 
         //WOBBLE C POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end())
-                .splineToConstantHeading(new Vector2d(52.0, 42.0), Math.toRadians(0.0))
+                .splineToSplineHeading( new Pose2d(52.0, 40.0, Math.toRadians(0)), Math.toRadians(0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
                 .build();
 
         //PARK
         Trajectory C7 = drive.trajectoryBuilder(C6.end(),true)
-                .splineToLinearHeading( new Pose2d(6.0,16.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+                .splineToLinearHeading( new Pose2d(6.0,16.0, Math.toRadians(0.0)), Math.toRadians(180.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
                 .build();
 
         // AUTO CASE STATEMENT
@@ -447,19 +499,19 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
 
                 //SHOOT x 3
                 robot.kicker.setPosition(kicker_out);
-                sleep(150);
+                sleep(180);
                 robot.kicker.setPosition(kicker_in);
-                sleep(150);
+                sleep(180);
 
                 robot.kicker.setPosition(kicker_out);
-                sleep(150);
+                sleep(180);
                 robot.kicker.setPosition(kicker_in);
-                sleep(150);
+                sleep(180);
 
                 robot.kicker.setPosition(kicker_out);
-                sleep(150);
+                sleep(180);
                 robot.kicker.setPosition(kicker_in);
-                sleep(150);
+                sleep(180);
                 robot.kicker.setPosition(kicker_out);
 
                 robot.intake.setPower(0.9);
@@ -468,7 +520,7 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                 //INTAKE 2
                 drive.followTrajectory(C2);
 
-                sleep(2000);
+                sleep(4000);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -484,7 +536,7 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                 //INTAKE 2 MORE
                 drive.followTrajectory(C3);
 
-                sleep(2000);
+                sleep(4000);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
@@ -500,20 +552,10 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                 robot.feeder_turn.setPower(0);
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
 
-                //WOBBLE C POSITION
-                drive.followTrajectory(C4);
-
-                //DROP WOBBLE 1
-                robot.wobble_lift.setPosition(wobble_down);
-                sleep(400);
-                robot.wobble_claw.setPosition(wobble_open);
-                sleep(200);
-                robot.wobble_lift.setPosition(wobble_up);
-
                 //PICKUP WOBBLE 2
                 drive.followTrajectory(C5);
 
-                //GRAB WOBBLE 1
+                //GRAB WOBBLE 2
                 robot.wobble_claw.setPosition(wobble_close);
                 sleep(700);
                 robot.wobble_lift.setPosition(wobble_up);
@@ -533,7 +575,6 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                 drive.followTrajectory(C7);
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
-
         }
     }
 }
