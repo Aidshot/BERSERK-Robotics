@@ -71,7 +71,8 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
         double wobble_up = 0.6;
         double wobble_down = 0.2;
         long shootWait = 330;
-        double webcam_right = 0.3;
+        double webcam_right = 0.1;
+        double webcam_left = 0.3;
 
         robot.webcam_servo.setPosition(webcam_right);
 

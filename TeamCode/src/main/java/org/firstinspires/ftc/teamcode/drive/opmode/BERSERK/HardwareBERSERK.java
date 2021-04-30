@@ -61,6 +61,7 @@ public class HardwareBERSERK
     public DcMotor shooter1       = null;
     public DcMotor shooter2       = null;
     public Servo kicker         = null;
+    public DcMotor top_roller         = null;
     public Servo emergency_servo         = null;
     public Servo flap           = null;
     public Servo wobble_lift    = null;
@@ -93,6 +94,7 @@ public class HardwareBERSERK
         intake = hwMap.get(DcMotor.class, "intake");
         shooter1 = hwMap.get(DcMotor.class, "shooter1");
         shooter2 = hwMap.get(DcMotor.class, "shooter2");
+        top_roller = hwMap.get(DcMotor.class, "top_roller");
         shooter1.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         shooter2.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         intake.setDirection(DcMotor.Direction.REVERSE);
@@ -110,6 +112,7 @@ public class HardwareBERSERK
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        top_roller.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         kicker = hwMap.get(Servo.class, "kicker");
