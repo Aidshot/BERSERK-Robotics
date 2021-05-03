@@ -179,7 +179,7 @@ public class TeleopBERSERK_v10_Fast extends LinearOpMode {
             if (gamepad1.right_bumper) {
                 robot.intake.setPower(1);
                 robot.feeder_turn.setPower(1);
-                robot.top_roller.setPower(-0.3);
+
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);
                 robot.feeder_turn.setPower(0);
