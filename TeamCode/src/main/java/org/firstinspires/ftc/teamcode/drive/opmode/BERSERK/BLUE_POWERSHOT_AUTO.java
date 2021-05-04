@@ -121,10 +121,6 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        // MAKE IT NOT CROSS B ZONE
-        //FIX ARM SERVOS FOR ALL AUTOS
-
-
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
@@ -148,14 +144,15 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
 
         //INTAKE FLOOR RINGS
         Trajectory A2 = drive.trajectoryBuilder(A1b.end().plus(new Pose2d(0, 0, Math.toRadians(0))))
-                .splineTo(new Vector2d(56.0,5.0), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(56.0, 30.0, Math.toRadians(90.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(-5.0, 12.0, Math.toRadians(25.0)), Math.toRadians(180.0))
+                .splineToSplineHeading(new Pose2d(56.0, 5.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 35.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 16.0, Math.toRadians(90.0)), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 6.0, Math.toRadians(25.0)), Math.toRadians(180.0))
                 .build();
 
         //Wobble POSITION
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineToLinearHeading(new Pose2d(10.0, 45.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(5.0, 45.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
         //PARK
