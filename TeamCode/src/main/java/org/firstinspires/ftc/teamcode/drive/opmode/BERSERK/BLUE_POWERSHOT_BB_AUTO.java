@@ -3,12 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,19 +11,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 
-import java.util.Arrays;
-
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
+public class BLUE_POWERSHOT_BB_AUTO extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -74,8 +66,6 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
         double pos1 = 0.0;
         double pos2 = 9.0;
         double pos3 = 15.0;
-
-        long pauseafterpowershots = 1000;
 
         robot.webcam_servo.setPosition(webcam_left);
 
@@ -132,10 +122,10 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
         Trajectory A1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    //robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(-1);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    robot.foldout_lift.setPower(0);
+                    //robot.foldout_lift.setPower(0);
                 })
                 .splineToSplineHeading(new Pose2d(-5.0, 11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
@@ -148,8 +138,16 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
+        //INTAKE FLOOR RINGS
+        Trajectory A2 = drive.trajectoryBuilder(A1b.end().plus(new Pose2d(0, 0, Math.toRadians(0))))
+                .splineToSplineHeading(new Pose2d(56.0, 5.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 35.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 16.0, Math.toRadians(90.0)), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 6.0, Math.toRadians(27.0)), Math.toRadians(180.0))
+                .build();
+
         //Wobble POSITION
-        Trajectory A3 = drive.trajectoryBuilder(A1b.end())
+        Trajectory A3 = drive.trajectoryBuilder(A2.end())
                 .splineToLinearHeading(new Pose2d(5.0, 45.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
@@ -179,8 +177,16 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
+        //INTAKE FLOOR RINGS
+        Trajectory B2 = drive.trajectoryBuilder(B1b.end().plus(new Pose2d(0, 0, Math.toRadians(0))))
+                .splineToSplineHeading(new Pose2d(56.0, 5.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 35.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 16.0, Math.toRadians(90.0)), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 6.0, Math.toRadians(27.0)), Math.toRadians(180.0))
+                .build();
+
         //Wobble POSITION
-        Trajectory B3 = drive.trajectoryBuilder(B1b.end())
+        Trajectory B3 = drive.trajectoryBuilder(B2.end())
                 .splineToLinearHeading(new Pose2d(35.0, 24.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
@@ -190,7 +196,7 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 .build();
 
         //   C AUTO TRAJECTORIES   //
-        //SHOOT POSITION
+        //SHOOT POSITIONadb connect 192.168.43.1
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
@@ -210,8 +216,16 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
+        //INTAKE FLOOR RINGS
+        Trajectory C2 = drive.trajectoryBuilder(C1b.end().plus(new Pose2d(0, 0, Math.toRadians(0))))
+                .splineToSplineHeading(new Pose2d(56.0, 5.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 35.0, Math.toRadians(90.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(59.0, 16.0, Math.toRadians(90.0)), Math.toRadians(-90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 6.0, Math.toRadians(27.0)), Math.toRadians(180.0))
+                .build();
+
         //Wobble POSITION
-        Trajectory C3 = drive.trajectoryBuilder(C1b.end())
+        Trajectory C3 = drive.trajectoryBuilder(C2.end())
                 .splineToLinearHeading(new Pose2d(55.0, 45.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
@@ -259,11 +273,46 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
+                //drive.turn(Math.toRadians(6.0));
+
                 //TURN OFF SHOOTER
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
-                sleep(pauseafterpowershots);
+                //PICK UP RINGS
+                robot.intake.setPower(0.9);
+                robot.feeder_turn.setPower(1);
+
+                drive.followTrajectory(A2);
+
+                robot.intake.setPower(0);
+                robot.feeder_turn.setPower(0);
+
+                //SHOOT X 3
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                robot.flap.setPosition(0.121);
+
+                sleep(1000);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                ((DcMotorEx) robot.shooter2).setVelocity(0);
 
                 drive.followTrajectory(A3);
 
@@ -317,11 +366,46 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
+                //drive.turn(Math.toRadians(6.0));
+
                 //TURN OFF SHOOTER
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
-                sleep(pauseafterpowershots);
+                //PICK UP RINGS
+                robot.intake.setPower(0.9);
+                robot.feeder_turn.setPower(1);
+
+                drive.followTrajectory(B2);
+
+                robot.intake.setPower(0);
+                robot.feeder_turn.setPower(0);
+
+                //SHOOT X 3
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                robot.flap.setPosition(0.121);
+
+                sleep(1000);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                ((DcMotorEx) robot.shooter2).setVelocity(0);
 
                 drive.followTrajectory(B3);
 
@@ -376,11 +460,46 @@ public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
+                //drive.turn(Math.toRadians(6.0));
+
                 //TURN OFF SHOOTER
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
-                sleep(pauseafterpowershots);
+                //PICK UP RINGS
+                robot.intake.setPower(0.9);
+                robot.feeder_turn.setPower(1);
+
+                drive.followTrajectory(C2);
+
+                robot.intake.setPower(0);
+                robot.feeder_turn.setPower(0);
+
+                //SHOOT X 3
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                robot.flap.setPosition(0.121);
+
+                sleep(1000);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                ((DcMotorEx) robot.shooter2).setVelocity(0);
 
                 drive.followTrajectory(C3);
 

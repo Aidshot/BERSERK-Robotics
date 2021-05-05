@@ -65,8 +65,8 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
-        double wobble_up = 0.6;
-        double wobble_down = 0.2;
+        double wobble_up = 0.3;
+        double wobble_down = 0.8;
         long shootWait = 330;
         double webcam_right = 0.1;
         double webcam_left = 0.3;
@@ -277,7 +277,7 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                 })
 
                 //Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(20.0, 17.0, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(20.0, 15.0, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
@@ -285,7 +285,7 @@ public class BLUE_FULL_AUTO_V2 extends LinearOpMode {
                         ), new ProfileAccelerationConstraint(60))
 
                 //Continue to Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(-35.0, 17.0, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(-35.0, 15.0, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
