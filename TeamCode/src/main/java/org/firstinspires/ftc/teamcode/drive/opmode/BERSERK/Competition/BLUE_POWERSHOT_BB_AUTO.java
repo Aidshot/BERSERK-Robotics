@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Competition;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.HardwareBERSERK;
+import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.PoseStorage;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -50,6 +52,8 @@ public class BLUE_POWERSHOT_BB_AUTO extends LinearOpMode {
         RevBlinkinLedDriver.BlinkinPattern pattern;
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
+
+        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
         double launch_angle = 0.125; //0.173
@@ -122,10 +126,10 @@ public class BLUE_POWERSHOT_BB_AUTO extends LinearOpMode {
         Trajectory A1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    //robot.foldout_lift.setPower(0);
+                    robot.foldout_lift.setPower(0);
                 })
                 .splineToSplineHeading(new Pose2d(-5.0, 11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
@@ -161,7 +165,7 @@ public class BLUE_POWERSHOT_BB_AUTO extends LinearOpMode {
         Trajectory B1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    //robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
@@ -200,7 +204,7 @@ public class BLUE_POWERSHOT_BB_AUTO extends LinearOpMode {
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    //robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);

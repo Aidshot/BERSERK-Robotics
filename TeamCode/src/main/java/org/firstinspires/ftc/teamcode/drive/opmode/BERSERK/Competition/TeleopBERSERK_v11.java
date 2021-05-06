@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Competition;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,14 +17,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.HardwareBERSERK;
+import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //Teleop utilizes Align to point and Shooter Velocity PID Control
 
 //@Config
 @TeleOp(group = "BERSERK")
-@Disabled
-public class TeleopBERSERK_v9_Fast extends LinearOpMode {
+public class TeleopBERSERK_v11 extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
 
@@ -124,8 +124,8 @@ public class TeleopBERSERK_v9_Fast extends LinearOpMode {
         double wobble_open = 0.6;
 
         //Wobble Lift
-        double wobble_up = 0.6;
-        double wobble_down = 0.2;
+        double wobble_up = 0.3;
+        double wobble_down = 0.8;
 
         //Initial Shooter Velocity
         double targetVelo = 0;
@@ -181,21 +181,28 @@ public class TeleopBERSERK_v9_Fast extends LinearOpMode {
             if (gamepad1.right_bumper) {
                 robot.intake.setPower(1);
                 robot.feeder_turn.setPower(1);
+
             } else if (gamepad1.left_bumper) {
                 robot.intake.setPower(0);
                 robot.feeder_turn.setPower(0);
+                robot.top_roller.setPower(0);
             }
 
             //Gamepad 2 Right Bumper reverses intake
             if (gamepad2.right_bumper) {
-                robot.intake.setPower(-0.8);
-                robot.feeder_turn.setPower(-1);
+                //robot.intake.setPower(-0.8);
+                //robot.feeder_turn.setPower(-1);
+                robot.top_roller.setPower(0.2);
             }
 
             //Shooter
             if (gamepad1.a || gamepad2.a) {
                 targetVelo = 1760; //1700
+                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                robot.blinkinLedDriver.setPattern(pattern);
             } else if (gamepad1.b || gamepad2.b) {
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                robot.blinkinLedDriver.setPattern(pattern);
                 targetVelo = 0;
             }
 
@@ -251,15 +258,15 @@ public class TeleopBERSERK_v9_Fast extends LinearOpMode {
 
             //Turn LEDS blue when no ring is present & LEDs haven't changed in 1 sec & if gamepad x is not being pressed
             if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1){
-                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-                robot.blinkinLedDriver.setPattern(pattern);
+                //pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                //robot.blinkinLedDriver.setPattern(pattern);
                 ringTimer2.reset();
             }
 
             //Turn LEDS red when  ring is present & LEDs haven't changed in 1 sec
             if(robot.color_sensor.alpha() > 80 && ringTimer2.seconds() > 1 ) { //150
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                robot.blinkinLedDriver.setPattern(pattern);
+                //pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                //robot.blinkinLedDriver.setPattern(pattern);
                 ringTimer.reset();
             }
 
