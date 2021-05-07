@@ -103,20 +103,6 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         State state = State.ZERO;
 
-        while (!isStarted()) {
-            switch (pipeline.getHeight()) {
-                case ZERO:
-                    state = State.ZERO;
-                    break;
-                case ONE:
-                    state = State.ONE;
-                    break;
-                case FOUR:
-                    state = State.FOUR;
-                    break;
-            }
-        }
-
         Pose2d startPose = new Pose2d(-63.0,-50, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
@@ -159,30 +145,31 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //WOBBLE A POSITION
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToLinearHeading(new Pose2d(10.0, -46.0, Math.toRadians(180.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(10.0, -49.0, Math.toRadians(180.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(5)
+                .strafeRight(8)
                 .build();
 
         //   B AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory B1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, 41.0), Math.toRadians(2.0))
+                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
+                .splineToSplineHeading(new Pose2d(-5.0, -41.0, Math.toRadians(2.0)), Math.toRadians(90.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(29.0, -36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -193,9 +180,9 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
         //PICKUP WOBBLE
         Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
                 .strafeRight(10)
-                .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .splineToSplineHeading( new Pose2d(-35.0, 25.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
-                .splineToConstantHeading( new Vector2d(-40.0, 24.0), Math.toRadians(100),
+                .splineToSplineHeading(new Pose2d(-19.0, -39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .splineToSplineHeading( new Pose2d(-35.0, -25.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
+                .splineToConstantHeading( new Vector2d(-39.0, -24.0), Math.toRadians(100),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(8, DriveConstants.TRACK_WIDTH)
@@ -205,23 +192,23 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-5.0,-39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
         Trajectory B6 = drive.trajectoryBuilder(B5.end())
-                .splineToLinearHeading( new Pose2d(20.0, 40.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(20.0, -40.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
         Trajectory B7 = drive.trajectoryBuilder(B6.end())
-                .splineToLinearHeading( new Pose2d(6.0,34.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+                .splineToLinearHeading( new Pose2d(6.0,-45.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
         //SHOOT POSITIONadb connect 192.168.43.1
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-42,35, Math.toRadians(3.0)))
+                .lineToSplineHeading(new Pose2d(-42,-39, Math.toRadians(3.0)))
                 //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.intake.setPower(0.2);
@@ -251,7 +238,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
         Trajectory C5 = drive.trajectoryBuilder(C3.end())
 
                 //Approach Zone C
-                .splineToSplineHeading( new Pose2d(38.0, 48.0, Math.toRadians(0)), Math.toRadians(0),
+                .splineToSplineHeading( new Pose2d(60.0, -60.0, Math.toRadians(-135)), Math.toRadians(0), //-90
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
@@ -259,7 +246,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                         ), new ProfileAccelerationConstraint(60))
 
                 //Lower Wobble Arm
-                .addSpatialMarker(new Vector2d(30, 50), () -> {
+                .addSpatialMarker(new Vector2d(30, -50), () -> {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
 
@@ -272,20 +259,26 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 //         ), new ProfileAccelerationConstraint(10))
 
                 //Open Wobble Claw
-                .addSpatialMarker(new Vector2d(55, 48), () -> {
+                .addSpatialMarker(new Vector2d(52, -60), () -> {
                     robot.wobble_claw.setPosition(wobble_open);
+                    robot.wobble_lift.setPosition(wobble_up);
                 })
 
+
                 //Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(20.0, 12, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(20.0, -42, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(60))
 
+                .addDisplacementMarker(() -> {
+                    robot.wobble_lift.setPosition(wobble_down);
+                })
+
                 //Continue to Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(-35.0, 12, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(-35.0, -42, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
@@ -303,7 +296,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //WOBBLE C POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end())
-                .splineToSplineHeading( new Pose2d(42.0, 56.0, Math.toRadians(-45.0)), Math.toRadians(0),
+                .splineToSplineHeading( new Pose2d(48.0, -56.0, Math.toRadians(-135.0)), Math.toRadians(0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
@@ -313,13 +306,27 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory C7 = drive.trajectoryBuilder(C6.end(),true)
-                .splineToLinearHeading( new Pose2d(15.0,34.0, Math.toRadians(5.0)), Math.toRadians(180.0),
+                .splineToLinearHeading( new Pose2d(15.0,-47.0, Math.toRadians(5.0)), Math.toRadians(180.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(60))
                 .build();
+
+        while (!isStarted()) {
+            switch (pipeline.getHeight()) {
+                case ZERO:
+                    state = State.ZERO;
+                    break;
+                case ONE:
+                    state = State.ONE;
+                    break;
+                case FOUR:
+                    state = State.FOUR;
+                    break;
+            }
+        }
 
         waitForStart();
         if (isStopRequested()) return;

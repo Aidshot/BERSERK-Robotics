@@ -99,27 +99,10 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
 
         State state = State.ZERO;
 
-        while (!isStarted()) {
-            switch (pipeline.getHeight()) {
-                case ZERO:
-                    state = State.ZERO;
-                    break;
-                case ONE:
-                    state = State.ONE;
-                    break;
-                case FOUR:
-                    state = State.FOUR;
-                    break;
-            }
-        }
-
-        waitForStart();
-
         robot.kicker.setPosition(kicker_out);
         Pose2d startPose = new Pose2d(-63.0,-26, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
-        if (isStopRequested()) return;
 
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
@@ -237,6 +220,23 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
         Trajectory C4 = drive.trajectoryBuilder(C3.end(),true)
                 .splineToSplineHeading(new Pose2d(10.0, 10.0, Math.toRadians(5.0)), Math.toRadians(180.0))
                 .build();
+
+        while (!isStarted()) {
+            switch (pipeline.getHeight()) {
+                case ZERO:
+                    state = State.ZERO;
+                    break;
+                case ONE:
+                    state = State.ONE;
+                    break;
+                case FOUR:
+                    state = State.FOUR;
+                    break;
+            }
+        }
+
+        waitForStart();
+        if (isStopRequested()) return;
 
         // AUTO CASE STATEMENT
         switch (state) {

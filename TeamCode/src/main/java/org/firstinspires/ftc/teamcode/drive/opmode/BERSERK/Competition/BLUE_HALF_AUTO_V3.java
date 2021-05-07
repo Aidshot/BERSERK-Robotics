@@ -103,20 +103,6 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         State state = State.ZERO;
 
-        while (!isStarted()) {
-            switch (pipeline.getHeight()) {
-                case ZERO:
-                    state = State.ZERO;
-                    break;
-                case ONE:
-                    state = State.ONE;
-                    break;
-                case FOUR:
-                    state = State.FOUR;
-                    break;
-            }
-        }
-
         Pose2d startPose = new Pose2d(-63.0,50, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
@@ -239,7 +225,7 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
                 .build();
 
-        //WOBBLE C POSITION
+        //PARK
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
                 .splineToLinearHeading( new Pose2d(15.0,34.0, Math.toRadians(5.0)), Math.toRadians(180.0),
                         new MinVelocityConstraint(Arrays.asList(
@@ -248,6 +234,20 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                         )
                         ), new ProfileAccelerationConstraint(60))
                 .build();
+
+        while (!isStarted()) {
+            switch (pipeline.getHeight()) {
+                case ZERO:
+                    state = State.ZERO;
+                    break;
+                case ONE:
+                    state = State.ONE;
+                    break;
+                case FOUR:
+                    state = State.FOUR;
+                    break;
+            }
+        }
 
         waitForStart();
         if (isStopRequested()) return;
