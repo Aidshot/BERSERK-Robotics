@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Competition;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -12,7 +12,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -21,7 +20,6 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.HardwareBERSERK;
 import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.PoseStorage;
-import org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Tests.BLUE_REICHER_AUTO_B;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -32,8 +30,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-@Disabled
-public class BLUE_REICHER_AUTO extends LinearOpMode {
+public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -64,14 +61,16 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
 
+        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+
         double shooter_target_velo = 1830;
         double launch_angle = 0.125; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
-        double wobble_up = 0.6;
-        double wobble_down = 0.2;
+        double wobble_up = 0.3;
+        double wobble_down = 0.8;
         long shootWait = 330;
         double webcam_right = 0.1;
         double webcam_left = 0.3;
@@ -118,20 +117,15 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
             }
         }
 
-        waitForStart();
-
-        robot.kicker.setPosition(kicker_out);
         Pose2d startPose = new Pose2d(-63.0,50, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
-
-        if (isStopRequested()) return;
 
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
@@ -141,23 +135,17 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(5.0, 55.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE OUT OF THE WAY
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .back(50)
+                .splineToSplineHeading( new Pose2d(-20.0, 53.0, Math.toRadians(0.0)), Math.toRadians(180))
                 .build();
 
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading(new Pose2d(-30.0, 25.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 10.0, Math.toRadians(0.0)), Math.toRadians(0.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(15))
+                .splineToSplineHeading( new Pose2d(10.0, 37.0, Math.toRadians(0.0)), Math.toRadians(0)) //135
                 .build();
 
         //   B AUTO TRAJECTORIES   //
@@ -165,7 +153,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
         Trajectory B1 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.foldout_lift.setPower(-1);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
@@ -178,76 +166,91 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
-        //INTAKE + SHOOT
-        Trajectory B3 = drive.trajectoryBuilder(B2.end(),true)
-                .strafeRight(5)
+        //MOVE TOWARDS STACK
+        //  Trajectory B3 = drive.trajectoryBuilder(B2.end(),true)
+        //         .splineToLinearHeading(new Pose2d(-19.0, 42.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+        //          .build();
+
+        //PICKUP RING
+        Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
+                .strafeRight(10)
                 .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .splineToSplineHeading( new Pose2d(-7.0,47.0, Math.toRadians(-3.0)), Math.toRadians(0.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(15, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(15))
+                .build();
+
+        //SHOOT
+        Trajectory B5 = drive.trajectoryBuilder(B4.end())
+                .splineToLinearHeading( new Pose2d(-5.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
-        Trajectory B4 = drive.trajectoryBuilder(B3.end())
-                .forward(10)
+        Trajectory B6 = drive.trajectoryBuilder(B5.end())
+                .splineToLinearHeading( new Pose2d(6.0,39.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
+                .lineToSplineHeading(new Pose2d(-42,35, Math.toRadians(3.0)))
+                //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.foldout_lift.setPower(-1);
+                    robot.intake.setPower(0.2);
+                    robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
+                    robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, 41.0), Math.toRadians(2.0))
+                .build();
+
+        //INTAKE FIRST 2
+        Trajectory C2 = drive.trajectoryBuilder(C1.end())
+                .forward(12)
+                .build();
+
+        //INTAKE SECOND 2
+        Trajectory C3 = drive.trajectoryBuilder(C2.end())
+                .forward(15)
                 .build();
 
         //WOBBLE C POSITION
-        Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .splineToConstantHeading(new Vector2d(52.0, 49.0), Math.toRadians(0.0))
-                .build();
+        //   Trajectory C4 = drive.trajectoryBuilder(C3.end())
+        //           .build();
 
-        //MOVE TOWARDS STACK
-        Trajectory C3 = drive.trajectoryBuilder(C2.end(),true)
-                .splineToLinearHeading(new Pose2d(0.0, 33.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .build();
+        //PICK UP WOBBLE 2
+        Trajectory C5 = drive.trajectoryBuilder(C3.end())
 
-        //RAM STACK (Fast Constraints)
-        Trajectory C4 = drive.trajectoryBuilder(C3.end())
-                .forward(13,
+                //Approach Zone C
+                .splineToSplineHeading( new Pose2d(48.0, 48.0, Math.toRadians(0)), Math.toRadians(0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(90, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(90))
+                        ), new ProfileAccelerationConstraint(60))
+
+                //Lower Wobble Arm
+                .addSpatialMarker(new Vector2d(30, 50), () -> {
+                    robot.wobble_lift.setPosition(wobble_down);
+                })
+
+                //Open Wobble Claw
+                .addSpatialMarker(new Vector2d(55, 48), () -> {
+                    robot.wobble_claw.setPosition(wobble_open);
+                })
+
                 .build();
 
-        //INTAKE STACK (Slow Constraints)
-        Trajectory C5 = drive.trajectoryBuilder(C4.end())
-                .forward(11,
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(4, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        //SHOOT POSITION
+        //WOBBLE C POSITION
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToSplineHeading( new Pose2d(-5.0, 41.0, Math.toRadians(2.0)), Math.toRadians(180))
+                .splineToLinearHeading( new Pose2d(15.0,34.0, Math.toRadians(5.0)), Math.toRadians(180.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
                 .build();
 
-        //PARK
-        Trajectory C7 = drive.trajectoryBuilder(C6.end())
-                //.forward(5)
-                .splineToSplineHeading( new Pose2d(6.0,12.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
-                .build();
+        waitForStart();
+        if (isStopRequested()) return;
 
         // AUTO CASE STATEMENT
         switch (state) {
@@ -256,6 +259,7 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 telemetry.update();
 
                 //SET SERVOS
+                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
@@ -295,21 +299,23 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(400);
                 robot.wobble_lift.setPosition(wobble_up);
-                sleep(800);
+                sleep(700);
 
                 drive.followTrajectory(A3);
-                sleep(5000);
+
+                sleep(9000);
                 drive.followTrajectory(A4);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
-                break;
 
+                break;
             case ONE:
                 // B AUTO //
                 telemetry.addData("Stack:", "ONE");
                 telemetry.update();
 
                 //SET SERVOS
+                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
@@ -349,20 +355,21 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(200);
                 robot.wobble_lift.setPosition(wobble_up);
-                sleep(400);
-
 
                 //MOVE TOWARDS STACK
-                robot.intake.setPower(0.85);
+                robot.intake.setPower(0.8);
                 robot.feeder_turn.setPower(1);
                 //   drive.followTrajectory(B3);
 
+                //PICKUP WOBBLE
+                drive.followTrajectory(B4);
+
                 //SHOOT POSITION
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                drive.followTrajectory(B3);
+                drive.followTrajectory(B5);
 
-                //SHOOT X 2
-                sleep(2000);
+                //SHOOT X 1
+                sleep(1500);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -383,83 +390,55 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
                 //PARK
-                drive.followTrajectory(B4);
+                drive.followTrajectory(B6);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
 
             case FOUR:
+
                 // C AUTO //
                 telemetry.addData("Stack:", "FOUR");
                 telemetry.update();
 
                 //SET SERVOS
+                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                ((DcMotorEx) robot.shooter1).setVelocity(1780); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
 
                 //SHOOT x 3
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                //TURN OFF SHOOTER
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
-
-                //WOBBLE C POSITION
-                drive.followTrajectory(C2);
-
-                //DROP WOBBLE 1
-                robot.wobble_lift.setPosition(wobble_down);
-                sleep(400);
-                robot.wobble_claw.setPosition(wobble_open);
                 sleep(300);
-                robot.wobble_lift.setPosition(wobble_up);
+                robot.kicker.setPosition(kicker_out);
+                sleep(180);
+                robot.kicker.setPosition(kicker_in);
+                sleep(180);
 
-                //MOVE TOWARDS STACK
-                drive.followTrajectory(C3);
+                robot.kicker.setPosition(kicker_out);
+                sleep(180);
+                robot.kicker.setPosition(kicker_in);
+                sleep(180);
 
-                robot.intake.setPower(0.8);
+                robot.kicker.setPosition(kicker_out);
+                sleep(180);
+                robot.kicker.setPosition(kicker_in);
+                sleep(180);
+                robot.kicker.setPosition(kicker_out);
+
+                robot.intake.setPower(0.9);
                 robot.feeder_turn.setPower(1);
 
-                //RAM STACK
-                drive.followTrajectory(C4);
+                ((DcMotorEx) robot.shooter1).setVelocity(1740); //1820
 
-                sleep(500);
-
-                //INTAKE STACK
-                drive.followTrajectory(C5);
-
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-
-                //SHOOT POSITION
-                drive.followTrajectory(C6);
+                //INTAKE 2
+                drive.followTrajectory(C2);
 
                 sleep(2000);
 
-                //SHOOT X 3
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
@@ -471,17 +450,45 @@ public class BLUE_REICHER_AUTO extends LinearOpMode {
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
-                //TURN OFF INTAKE AND SHOOTER
+                ((DcMotorEx) robot.shooter1).setVelocity(1760); //1820
+
+                //INTAKE 2 MORE
+                drive.followTrajectory(C3);
+
+                sleep(2000);
+                robot.kicker.setPosition(kicker_out);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+
+                robot.kicker.setPosition(kicker_out);
+                sleep(450);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
                 robot.intake.setPower(0);
                 robot.feeder_turn.setPower(0);
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
 
+                //DROP WOBBLE
+                drive.followTrajectory(C5);
+                robot.wobble_lift.setPosition(wobble_up);
                 //PARK
-                drive.followTrajectory(C7);
+                drive.followTrajectory(C6);
+
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
-
         }
     }
 }
