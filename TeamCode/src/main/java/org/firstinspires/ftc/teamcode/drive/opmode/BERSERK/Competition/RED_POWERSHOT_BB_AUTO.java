@@ -107,22 +107,22 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
-                .splineToLinearHeading(new Pose2d(-50.0, -12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(-50.0, 2.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineToSplineHeading(new Pose2d(-5.0, -11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
+                .splineToSplineHeading(new Pose2d(-5.0, 2.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
 
         Trajectory A1a = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(-5.0, -13.0, Math.toRadians(pos2)), Math.toRadians(0.0)) //8
+                .splineToLinearHeading(new Pose2d(-4.0, 4.0, Math.toRadians(pos2)), Math.toRadians(0.0)) //8
                 .build();
 
         Trajectory A1b = drive.trajectoryBuilder(A1a.end())
-                .splineToLinearHeading(new Pose2d(-5.0, -14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
+                .splineToLinearHeading(new Pose2d(-5.0, 6.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
         //INTAKE FLOOR RINGS
@@ -130,12 +130,12 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(56.0, -5.0, Math.toRadians(-90.0)), Math.toRadians(-90.0))
                 .splineToSplineHeading(new Pose2d(59.0, -35.0, Math.toRadians(-90.0)), Math.toRadians(-90.0))
                 .splineToSplineHeading(new Pose2d(59.0, -16.0, Math.toRadians(-90.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(-5.0, -6.0, Math.toRadians(-27.0)), Math.toRadians(180.0))
+                .splineToSplineHeading(new Pose2d(-5.0, -6.0, Math.toRadians(-15.0)), Math.toRadians(180.0))
                 .build();
 
         //Wobble POSITION
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineToLinearHeading(new Pose2d(5.0, -45.0, Math.toRadians(180.0)), Math.toRadians(90.0))
+                .splineToLinearHeading(new Pose2d(15.0, -42.0, Math.toRadians(180.0)), Math.toRadians(90.0))
                 .build();
 
         //PARK
@@ -250,7 +250,7 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
                 robot.flap.setPosition(launch_angle);
                 robot.kicker.setPosition(kicker_out);
                 robot.flap.setPosition(0.174);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                ((DcMotorEx) robot.shooter1).setVelocity(1750);
 
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
@@ -293,7 +293,7 @@ public class RED_POWERSHOT_BB_AUTO extends LinearOpMode {
                 robot.feeder_turn.setPower(0);
 
                 //SHOOT X 3
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                ((DcMotorEx) robot.shooter1).setVelocity(1750);
                 robot.flap.setPosition(0.121);
 
                 sleep(1000);
