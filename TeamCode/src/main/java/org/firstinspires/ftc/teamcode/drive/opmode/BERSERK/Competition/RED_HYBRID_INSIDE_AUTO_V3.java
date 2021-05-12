@@ -75,7 +75,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
         double webcam_right = 0.1;
         double webcam_left = 0.3;
 
-        robot.webcam_servo.setPosition(webcam_left);
+        robot.webcam_servo.setPosition(webcam_right);
 
         int cameraMonitorViewId = this
                 .hardwareMap

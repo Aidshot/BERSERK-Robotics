@@ -115,12 +115,12 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
+                .splineTo(new Vector2d(-20.0, 57.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(5.0, 50.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE OUT OF THE WAY
@@ -130,7 +130,12 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading( new Pose2d(10.0, 37.0, Math.toRadians(0.0)), Math.toRadians(0)) //135
+                .splineToSplineHeading( new Pose2d(10.0, 37.0, Math.toRadians(0.0)), Math.toRadians(0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(20))
                 .build();
 
         //   B AUTO TRAJECTORIES   //
@@ -142,12 +147,12 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
+                .splineTo(new Vector2d(-20.0, 57.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(24.0, 41.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -427,7 +432,7 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 sleep(180);
                 robot.kicker.setPosition(kicker_out);
 
-                robot.intake.setPower(0.85);
+                robot.intake.setPower(0.80);
                 robot.feeder_turn.setPower(1);
 
                 //INTAKE 2

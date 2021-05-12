@@ -61,7 +61,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
         double launch_angle = 0.125; //0.173
@@ -150,7 +150,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory A5 = drive.trajectoryBuilder(A4.end())
-                .strafeRight(28)
+                .strafeRight(5)
                 .build();
 
         //   B AUTO TRAJECTORIES   //
