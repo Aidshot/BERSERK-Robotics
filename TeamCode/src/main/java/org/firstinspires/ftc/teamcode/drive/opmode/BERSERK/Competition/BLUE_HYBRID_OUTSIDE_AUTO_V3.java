@@ -30,7 +30,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
+public class BLUE_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -64,14 +64,14 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
         double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
-        double launch_angle = 0.125; //0.173
+        double launch_angle = 0.14; //0.173 (Higher= Lower flap)
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
         double wobble_up = 0.3;
         double wobble_down = 0.8;
-        long shootWait = 330;
+        long shootWait = 500;
         double webcam_right = 0.1;
         double webcam_left = 0.3;
 
@@ -120,17 +120,23 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(-4.0, 60.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE OUT OF THE WAY
         Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineToSplineHeading( new Pose2d(-20.0, 53.0, Math.toRadians(0.0)), Math.toRadians(180))
+                .strafeRight(10)
+                .splineToSplineHeading( new Pose2d(-25.0, 53.0, Math.toRadians(0.0)), Math.toRadians(180))
                 .build();
 
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading( new Pose2d(10.0, 37.0, Math.toRadians(0.0)), Math.toRadians(0)) //135
+                .splineToSplineHeading( new Pose2d(10.0, 40.0, Math.toRadians(0.0)), Math.toRadians(0), //-90
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(20)) //135
                 .build();
 
         //   B AUTO TRAJECTORIES   //
@@ -142,12 +148,13 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
+                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
                 .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(35.0, 52.0, Math.toRadians(180.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -155,26 +162,16 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
         //         .splineToLinearHeading(new Pose2d(-19.0, 42.0, Math.toRadians(180.0)), Math.toRadians(180.0))
         //          .build();
 
-        //PICKUP RING
-        Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
-                .strafeRight(10)
-                .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-                .build();
-
-        //SHOOT
-        Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
-                .build();
-
         //PARK
-        Trajectory B6 = drive.trajectoryBuilder(B5.end())
-                .splineToLinearHeading( new Pose2d(6.0,39.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+        Trajectory B6 = drive.trajectoryBuilder(B2.end())
+                .strafeRight(4)
+                .splineToConstantHeading(new Vector2d(20.0, 52.0), Math.toRadians(180.0))
+                .splineToSplineHeading( new Pose2d(6.0,59.0, Math.toRadians(0.0)), Math.toRadians(180.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-42,35, Math.toRadians(3.0)))
                 //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.intake.setPower(0.2);
@@ -184,53 +181,21 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                     robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
                 })
-                .build();
-
-        //INTAKE FIRST 2
-        Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .forward(12)
-                .build();
-
-        //INTAKE SECOND 2
-        Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(15)
+                .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE C POSITION
-        //   Trajectory C4 = drive.trajectoryBuilder(C3.end())
-        //           .build();
-
-        //PICK UP WOBBLE 2
-        Trajectory C5 = drive.trajectoryBuilder(C3.end())
-
-                //Approach Zone C
-                .splineToSplineHeading( new Pose2d(48.0, 48.0, Math.toRadians(0)), Math.toRadians(0),
+        Trajectory C2 = drive.trajectoryBuilder(C1.end())
+                .splineToLinearHeading( new Pose2d(50.0,58.0, Math.toRadians(-90.0)), Math.toRadians(0.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
                         )
                         ), new ProfileAccelerationConstraint(60))
-
-                //Lower Wobble Arm
-                .addSpatialMarker(new Vector2d(30, 50), () -> {
-                    robot.wobble_lift.setPosition(wobble_down);
-                })
-
-                //Open Wobble Claw
-                .addSpatialMarker(new Vector2d(55, 48), () -> {
-                    robot.wobble_claw.setPosition(wobble_open);
-                })
-
                 .build();
 
-        //PARK
-        Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(15.0,34.0, Math.toRadians(5.0)), Math.toRadians(180.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(60))
+        Trajectory C3 = drive.trajectoryBuilder(C2.end())
+                .splineToLinearHeading( new Pose2d(10.0,62.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         while (!isStarted()) {
@@ -260,9 +225,10 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
+                robot.flap.setPosition(launch_angle);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
+                sleep(7000);
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
 
@@ -297,13 +263,11 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(400);
                 robot.wobble_lift.setPosition(wobble_up);
-                sleep(700);
 
                 drive.followTrajectory(A3);
 
-                sleep(9000);
+                sleep(3000);
                 drive.followTrajectory(A4);
-
                 PoseStorage.currentPose = drive.getPoseEstimate();
 
                 break;
@@ -316,7 +280,9 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
+                robot.flap.setPosition(launch_angle);
+
+                sleep(4000);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
@@ -354,39 +320,6 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 sleep(200);
                 robot.wobble_lift.setPosition(wobble_up);
 
-                //MOVE TOWARDS STACK
-                robot.intake.setPower(0.8);
-                robot.feeder_turn.setPower(1);
-                //   drive.followTrajectory(B3);
-
-                //PICKUP WOBBLE
-                drive.followTrajectory(B4);
-
-                //SHOOT POSITION
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                drive.followTrajectory(B5);
-
-                //SHOOT X 1
-                sleep(1500);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                //TURN OFF INTAKE AND SHOOTER
-                robot.intake.setPower(0);
-                robot.feeder_turn.setPower(0);
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
-
                 //PARK
                 drive.followTrajectory(B6);
 
@@ -403,37 +336,17 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
-                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
+                robot.flap.setPosition(launch_angle);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
 
                 //SHOOT x 3
-                sleep(300);
                 robot.kicker.setPosition(kicker_out);
-                sleep(180);
+                sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
-                sleep(180);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(180);
-                robot.kicker.setPosition(kicker_in);
-                sleep(180);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(180);
-                robot.kicker.setPosition(kicker_in);
-                sleep(180);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.intake.setPower(0.85);
-                robot.feeder_turn.setPower(1);
-
-                //INTAKE 2
-                drive.followTrajectory(C2);
-
-                sleep(1000);
+                sleep(shootWait);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -446,40 +359,19 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
-                //INTAKE 2 MORE
-                drive.followTrajectory(C3);
-
-                sleep(1000);
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(450);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.intake.setPower(0);
-                robot.feeder_turn.setPower(0);
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
+                ((DcMotorEx) robot.shooter1).setVelocity(0); //1820
 
                 //DROP WOBBLE
-                drive.followTrajectory(C5);
+                drive.followTrajectory(C2);
+
+                //DROP WOBBLE 1
+                robot.wobble_lift.setPosition(wobble_down);
+                sleep(700);
+                robot.wobble_claw.setPosition(wobble_open);
+                sleep(200);
                 robot.wobble_lift.setPosition(wobble_up);
-                //PARK
-                drive.followTrajectory(C6);
+
+                drive.followTrajectory(C3);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;

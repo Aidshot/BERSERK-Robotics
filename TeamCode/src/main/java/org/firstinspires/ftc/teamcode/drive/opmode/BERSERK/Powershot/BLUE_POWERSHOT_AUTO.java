@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Competition;
+package org.firstinspires.ftc.teamcode.drive.opmode.BERSERK.Powershot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -30,7 +30,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
+public class BLUE_POWERSHOT_AUTO extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -75,7 +75,13 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
         double webcam_right = 0.1;
         double webcam_left = 0.3;
 
-        robot.webcam_servo.setPosition(webcam_right);
+        double pos1 = 0.0;
+        double pos2 = 9.0;
+        double pos3 = 15.0;
+
+        long pauseafterpowershots = 1000;
+
+        robot.webcam_servo.setPosition(webcam_left);
 
         int cameraMonitorViewId = this
                 .hardwareMap
@@ -103,134 +109,101 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         State state = State.ZERO;
 
-        Pose2d startPose = new Pose2d(-63.0,50, Math.toRadians(0.0));
+        robot.kicker.setPosition(kicker_out);
+        Pose2d startPose = new Pose2d(-63.0,26, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
 
-        //WOBBLE A POSITION
-        Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(5.0, 53.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+        Trajectory A1a = drive.trajectoryBuilder(A1.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 13.0, Math.toRadians(pos2)), Math.toRadians(0.0)) //8
                 .build();
 
-        //MOVE OUT OF THE WAY
-        Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .splineToSplineHeading( new Pose2d(-20.0, 53.0, Math.toRadians(0.0)), Math.toRadians(180))
+        Trajectory A1b = drive.trajectoryBuilder(A1a.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
+                .build();
+
+        //Wobble POSITION
+        Trajectory A3 = drive.trajectoryBuilder(A1b.end())
+                .splineToLinearHeading(new Pose2d(5.0, 45.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading( new Pose2d(10.0, 37.0, Math.toRadians(0.0)), Math.toRadians(0)) //135
+                .strafeRight(33)
                 .build();
 
         //   B AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory B1 = drive.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, 60.0), Math.toRadians(-10.0))
+                .splineToSplineHeading(new Pose2d(-5.0, 11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
 
-        //WOBBLE B POSITION
-        Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+        Trajectory B1a = drive.trajectoryBuilder(B1.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 13.0, Math.toRadians(pos2)), Math.toRadians(0.0)) //8
                 .build();
 
-        //MOVE TOWARDS STACK
-        //  Trajectory B3 = drive.trajectoryBuilder(B2.end(),true)
-        //         .splineToLinearHeading(new Pose2d(-19.0, 42.0, Math.toRadians(180.0)), Math.toRadians(180.0))
-        //          .build();
-
-        //PICKUP RING
-        Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
-                .strafeRight(10)
-                .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+        Trajectory B1b = drive.trajectoryBuilder(B1a.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
-        //SHOOT
-        Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
+        //Wobble POSITION
+        Trajectory B3 = drive.trajectoryBuilder(B1b.end())
+                .splineToLinearHeading(new Pose2d(35.0, 24.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
         //PARK
-        Trajectory B6 = drive.trajectoryBuilder(B5.end())
-                .splineToLinearHeading( new Pose2d(6.0,39.0, Math.toRadians(0.0)), Math.toRadians(-90.0))
+        Trajectory B4 = drive.trajectoryBuilder(B3.end())
+                .splineToSplineHeading(new Pose2d(10.0, 10.0, Math.toRadians(5.0)), Math.toRadians(180.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-42,35, Math.toRadians(3.0)))
-                //.strafeTo(new Vector2d(-42.0, 35.0))
+                .splineToLinearHeading(new Pose2d(-50.0, 12.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.intake.setPower(0.2);
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
                 })
+                .splineToSplineHeading(new Pose2d(-5.0, 11.0, Math.toRadians(pos1)), Math.toRadians(0.0)) //0
                 .build();
 
-        //INTAKE FIRST 2
-        Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .forward(12)
+        Trajectory C1a = drive.trajectoryBuilder(C1.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 13.0, Math.toRadians(pos2)), Math.toRadians(0.0)) //8
                 .build();
 
-        //INTAKE SECOND 2
-        Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(15)
+        Trajectory C1b = drive.trajectoryBuilder(C1a.end())
+                .splineToLinearHeading(new Pose2d(-5.0, 14.0, Math.toRadians(pos3)), Math.toRadians(0.0)) //15
                 .build();
 
-        //WOBBLE C POSITION
-        //   Trajectory C4 = drive.trajectoryBuilder(C3.end())
-        //           .build();
-
-        //PICK UP WOBBLE 2
-        Trajectory C5 = drive.trajectoryBuilder(C3.end())
-
-                //Approach Zone C
-                .splineToSplineHeading( new Pose2d(48.0, 48.0, Math.toRadians(0)), Math.toRadians(0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(60))
-
-                //Lower Wobble Arm
-                .addSpatialMarker(new Vector2d(30, 50), () -> {
-                    robot.wobble_lift.setPosition(wobble_down);
-                })
-
-                //Open Wobble Claw
-                .addSpatialMarker(new Vector2d(55, 48), () -> {
-                    robot.wobble_claw.setPosition(wobble_open);
-                })
-
+        //Wobble POSITION
+        Trajectory C3 = drive.trajectoryBuilder(C1b.end())
+                .splineToLinearHeading(new Pose2d(55.0, 45.0, Math.toRadians(5.0)), Math.toRadians(90.0))
                 .build();
 
         //PARK
-        Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(15.0,34.0, Math.toRadians(5.0)), Math.toRadians(180.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(60))
+        Trajectory C4 = drive.trajectoryBuilder(C3.end(),true)
+                .splineToSplineHeading(new Pose2d(10.0, 10.0, Math.toRadians(5.0)), Math.toRadians(180.0))
                 .build();
 
         while (!isStarted()) {
@@ -257,29 +230,34 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 telemetry.update();
 
                 //SET SERVOS
-                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
+                robot.flap.setPosition(launch_angle);
+                robot.kicker.setPosition(kicker_out);
+                robot.flap.setPosition(0.174);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
 
-                //SHOOT x 3
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
+                //SHOOT POWERSHOTS
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
-
                 robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
+
+                drive.followTrajectory(A1a);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
-
                 robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
+
+                drive.followTrajectory(A1b);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
@@ -288,20 +266,17 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
-                //WOBBLE A POSITION
-                drive.followTrajectory(A2);
-
-                //DROP WOBBLE 1
-                robot.wobble_lift.setPosition(wobble_down);
-                sleep(700);
-                robot.wobble_claw.setPosition(wobble_open);
-                sleep(400);
-                robot.wobble_lift.setPosition(wobble_up);
-                sleep(700);
+                sleep(pauseafterpowershots);
 
                 drive.followTrajectory(A3);
 
-                sleep(9000);
+                //DROP WOBBLE 2
+                robot.wobble_lift.setPosition(wobble_down);
+                sleep(700);
+                robot.wobble_claw.setPosition(wobble_open);
+                sleep(200);
+                robot.wobble_lift.setPosition(wobble_up);
+
                 drive.followTrajectory(A4);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
@@ -313,29 +288,34 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 telemetry.update();
 
                 //SET SERVOS
-                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
-
+                robot.flap.setPosition(launch_angle);
+                robot.kicker.setPosition(kicker_out);
+                robot.flap.setPosition(0.174);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(B1);
 
-                //SHOOT x 3
-                robot.kicker.setPosition(kicker_out);
+                //SHOOT POWERSHOTS
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
-
                 robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
+
+                drive.followTrajectory(B1a);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
-
                 robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
+
+                drive.followTrajectory(B1b);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
@@ -344,51 +324,18 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 ((DcMotorEx) robot.shooter1).setVelocity(0);
                 ((DcMotorEx) robot.shooter2).setVelocity(0);
 
-                //WOBBLE B POSITION
-                drive.followTrajectory(B2);
+                sleep(pauseafterpowershots);
 
-                //DROP WOBBLE 1
+                drive.followTrajectory(B3);
+
+                //DROP WOBBLE 2
                 robot.wobble_lift.setPosition(wobble_down);
                 sleep(700);
                 robot.wobble_claw.setPosition(wobble_open);
                 sleep(200);
                 robot.wobble_lift.setPosition(wobble_up);
 
-                //MOVE TOWARDS STACK
-                robot.intake.setPower(0.8);
-                robot.feeder_turn.setPower(1);
-                //   drive.followTrajectory(B3);
-
-                //PICKUP WOBBLE
                 drive.followTrajectory(B4);
-
-                //SHOOT POSITION
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
-                drive.followTrajectory(B5);
-
-                //SHOOT X 1
-                sleep(1500);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                //TURN OFF INTAKE AND SHOOTER
-                robot.intake.setPower(0);
-                robot.feeder_turn.setPower(0);
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-                ((DcMotorEx) robot.shooter2).setVelocity(0);
-
-                //PARK
-                drive.followTrajectory(B6);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
@@ -400,86 +347,54 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 telemetry.update();
 
                 //SET SERVOS
-                robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
-                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
+                robot.flap.setPosition(launch_angle);
+                robot.kicker.setPosition(kicker_out);
+                robot.flap.setPosition(0.174);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
 
-                //SHOOT x 3
-                sleep(300);
-                robot.kicker.setPosition(kicker_out);
-                sleep(180);
-                robot.kicker.setPosition(kicker_in);
-                sleep(180);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(180);
-                robot.kicker.setPosition(kicker_in);
-                sleep(180);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(180);
-                robot.kicker.setPosition(kicker_in);
-                sleep(180);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.intake.setPower(0.85);
-                robot.feeder_turn.setPower(1);
-
-                //INTAKE 2
-                drive.followTrajectory(C2);
-
-                sleep(1000);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
+                //SHOOT POWERSHOTS
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
 
-                //INTAKE 2 MORE
+                drive.followTrajectory(C1a);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                drive.followTrajectory(C1b);
+                //drive.turn(Math.toRadians(6.0));
+
+                sleep(800);
+                robot.kicker.setPosition(kicker_in);
+                sleep(shootWait);
+                robot.kicker.setPosition(kicker_out);
+
+                //TURN OFF SHOOTER
+                ((DcMotorEx) robot.shooter1).setVelocity(0);
+                ((DcMotorEx) robot.shooter2).setVelocity(0);
+
+                sleep(pauseafterpowershots);
+
                 drive.followTrajectory(C3);
 
-                sleep(1000);
-                robot.kicker.setPosition(kicker_out);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-
-                robot.kicker.setPosition(kicker_out);
-                sleep(450);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_in);
-                sleep(shootWait);
-                robot.kicker.setPosition(kicker_out);
-
-                robot.intake.setPower(0);
-                robot.feeder_turn.setPower(0);
-                ((DcMotorEx) robot.shooter1).setVelocity(0);
-
-                //DROP WOBBLE
-                drive.followTrajectory(C5);
+                //DROP WOBBLE 2
+                robot.wobble_lift.setPosition(wobble_down);
+                sleep(700);
+                robot.wobble_claw.setPosition(wobble_open);
+                sleep(200);
                 robot.wobble_lift.setPosition(wobble_up);
-                //PARK
-                drive.followTrajectory(C6);
+
+                drive.followTrajectory(C4);
 
                 PoseStorage.currentPose = drive.getPoseEstimate();
                 break;

@@ -406,8 +406,8 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(1780); //1820
+                robot.flap.setPosition(0.14);
+                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);

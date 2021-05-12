@@ -507,8 +507,8 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(1780); //1820
+                robot.flap.setPosition(0.14);
+                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -531,7 +531,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 sleep(180);
                 robot.kicker.setPosition(kicker_out);
 
-                robot.intake.setPower(0.9);
+                robot.intake.setPower(0.85);
                 robot.feeder_turn.setPower(1);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(1740); //1820
