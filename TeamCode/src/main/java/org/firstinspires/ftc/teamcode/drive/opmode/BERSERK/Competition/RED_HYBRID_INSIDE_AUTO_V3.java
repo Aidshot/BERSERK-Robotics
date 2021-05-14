@@ -103,7 +103,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         State state = State.ZERO;
 
-        Pose2d startPose = new Pose2d(-63.0,-50, Math.toRadians(0.0));
+        Pose2d startPose = new Pose2d(-63.0,-26, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
         //   A AUTO TRAJECTORIES   //
@@ -115,23 +115,17 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
+                .splineTo(new Vector2d(-20.0, -12.0), Math.toRadians(-13.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(-4.0, -60.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
-                .build();
-
-        //MOVE OUT OF THE WAY
-        Trajectory A3 = drive.trajectoryBuilder(A2.end())
-                .strafeRight(10)
-                .splineToSplineHeading( new Pose2d(-25.0, -53.0, Math.toRadians(0.0)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(12.0, -50.0, Math.toRadians(180.0)), Math.toRadians(-90.0))
                 .build();
 
         //PARK
-        Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading( new Pose2d(10.0, -40.0, Math.toRadians(0.0)), Math.toRadians(0), //-90
+        Trajectory A4 = drive.trajectoryBuilder(A2.end())
+                .strafeRight(40, //-90
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
@@ -149,12 +143,12 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                 })
                 //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
-                .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
+                .splineTo(new Vector2d(-20.0, -12.0), Math.toRadians(-13.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(35.0, -59.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(35.0, -20.0, Math.toRadians(180.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -164,7 +158,13 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory B6 = drive.trajectoryBuilder(B2.end())
-                .splineToLinearHeading( new Pose2d(6.0,-64.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .strafeRight(10)
+                .splineToSplineHeading( new Pose2d(10.0,-10.0, Math.toRadians(0.0)), Math.toRadians(180.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(20))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
@@ -179,21 +179,23 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                     robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
+                .splineTo(new Vector2d(-20.0, -12.0), Math.toRadians(-13.0))
                 .build();
 
         //WOBBLE C POSITION
         Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .splineToLinearHeading( new Pose2d(50.0,-56.0, Math.toRadians(-90.0)), Math.toRadians(0.0),
-                        new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
-                        )
-                        ), new ProfileAccelerationConstraint(60))
+                .splineToLinearHeading( new Pose2d(58.0,-47.0, Math.toRadians(210.0)), Math.toRadians(-90.0))
                 .build();
 
+        //PARK
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .splineToLinearHeading( new Pose2d(10.0,-63.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToSplineHeading( new Pose2d(25.0,-10.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .splineToSplineHeading( new Pose2d(10.0,-10.0, Math.toRadians(0.0)), Math.toRadians(180.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(10, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(10))
                 .build();
 
         while (!isStarted()) {
@@ -226,7 +228,6 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.flap.setPosition(launch_angle);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
-                sleep(7000);
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
 
@@ -262,9 +263,6 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 sleep(400);
                 robot.wobble_lift.setPosition(wobble_up);
 
-                drive.followTrajectory(A3);
-
-                sleep(3000);
                 drive.followTrajectory(A4);
                 PoseStorage.currentPose = drive.getPoseEstimate();
 
@@ -358,6 +356,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 ((DcMotorEx) robot.shooter1).setVelocity(0); //1820
 
                 //DROP WOBBLE
+                sleep(6000);
                 drive.followTrajectory(C2);
 
                 //DROP WOBBLE 1

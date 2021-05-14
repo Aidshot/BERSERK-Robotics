@@ -64,7 +64,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
         double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
-        double launch_angle = 0.125; //0.173
+        double launch_angle = 0.14; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -110,14 +110,13 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
         //   A AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory A1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, -38.0), Math.toRadians(4.0))
+                .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
                 .build();
 
         //WOBBLE A POSITION
@@ -132,21 +131,24 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory A4 = drive.trajectoryBuilder(A3.end())
-                .splineToSplineHeading( new Pose2d(10.0, -48.0, Math.toRadians(0.0)), Math.toRadians(0)) //135
+                .splineToSplineHeading( new Pose2d(10.0, -45.0, Math.toRadians(0.0)), Math.toRadians(0), //-90
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(20))
                 .build();
 
         //   B AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory B1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
-                .splineToSplineHeading(new Pose2d(-5.0, -41.0, Math.toRadians(2.0)), Math.toRadians(90.0))
+                .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -159,7 +161,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
         //         .splineToLinearHeading(new Pose2d(-19.0, 42.0, Math.toRadians(180.0)), Math.toRadians(180.0))
         //          .build();
 
-        //PICKUP WOBBLE
+        //PICKUP RING
         Trajectory B4 = drive.trajectoryBuilder(B2.end(),true)
                 .strafeRight(10)
                 .splineToSplineHeading(new Pose2d(-19.0, -39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
@@ -167,7 +169,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,-39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-5.0,-39.0, Math.toRadians(3.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
@@ -197,14 +199,14 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
         //INTAKE SECOND 2
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(15)
+                .forward(18)
                 .build();
 
         //WOBBLE C POSITION
         //   Trajectory C4 = drive.trajectoryBuilder(C3.end())
         //           .build();
 
-        //PICK UP WOBBLE 2
+        //DROPOFF
         Trajectory C5 = drive.trajectoryBuilder(C3.end())
 
                 //Approach Zone C
@@ -228,14 +230,14 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
                 .build();
 
-        //WOBBLE C POSITION
+        //PARK
         Trajectory C6 = drive.trajectoryBuilder(C5.end(),true)
-                .splineToLinearHeading( new Pose2d(15.0,-40.0, Math.toRadians(5.0)), Math.toRadians(180.0),
+                .splineToLinearHeading( new Pose2d(5.0,-43.0, Math.toRadians(0.0)), Math.toRadians(180.0),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(60))
+                        ), new ProfileAccelerationConstraint(20))
                 .build();
 
         while (!isStarted()) {
@@ -305,7 +307,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
                 drive.followTrajectory(A3);
 
-                sleep(9000);
+                sleep(10000);
                 drive.followTrajectory(A4);
                 PoseStorage.currentPose = drive.getPoseEstimate();
 
@@ -371,6 +373,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
 
                 //SHOOT X 1
                 sleep(1500);
+                robot.flap.setPosition(0.125);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -407,7 +410,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(0.14);
-                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
+                ((DcMotorEx) robot.shooter1).setVelocity(1890); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -430,10 +433,8 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
                 sleep(180);
                 robot.kicker.setPosition(kicker_out);
 
-                robot.intake.setPower(0.9);
+                robot.intake.setPower(0.75);
                 robot.feeder_turn.setPower(1);
-
-                ((DcMotorEx) robot.shooter1).setVelocity(1740); //1820
 
                 //INTAKE 2
                 drive.followTrajectory(C2);
@@ -450,8 +451,6 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_in);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_out);
-
-                ((DcMotorEx) robot.shooter1).setVelocity(1760); //1820
 
                 //INTAKE 2 MORE
                 drive.followTrajectory(C3);
@@ -485,6 +484,7 @@ public class RED_HALF_AUTO_V3 extends LinearOpMode {
                 //DROP WOBBLE
                 drive.followTrajectory(C5);
                 robot.wobble_lift.setPosition(wobble_up);
+
                 //PARK
                 drive.followTrajectory(C6);
 

@@ -227,7 +227,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //INTAKE SECOND 2
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(15)
+                .forward(18)
                 .build();
 
         //WOBBLE C POSITION
