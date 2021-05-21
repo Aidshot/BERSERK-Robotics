@@ -61,7 +61,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
         double launch_angle = 0.125; //0.173
@@ -112,9 +112,11 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .splineTo(new Vector2d(-5.0, -38.0), Math.toRadians(4.0))
                 .build();
@@ -159,12 +161,13 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, -55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
-                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
-                .splineToSplineHeading(new Pose2d(-5.0, -39.0, Math.toRadians(3.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(-5.0, -37.0, Math.toRadians(3.0)), Math.toRadians(90.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -209,14 +212,13 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
         //SHOOT POSITIONadb connect 192.168.43.1
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(new Pose2d(-42,-39, Math.toRadians(3.0)))
-                //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.intake.setPower(0.2);
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .build();
 
@@ -227,7 +229,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //INTAKE SECOND 2
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(18)
+                .forward(20)
                 .build();
 
         //WOBBLE C POSITION
@@ -266,7 +268,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
 
                 //Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(20.0, -43, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(20.0, -38, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
@@ -278,7 +280,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 })
 
                 //Continue to Approach Wobble 2
-                .splineToSplineHeading( new Pose2d(-36.0, -44, Math.toRadians(90)), Math.toRadians(180),
+                .splineToSplineHeading( new Pose2d(-36.0, -38, Math.toRadians(90)), Math.toRadians(180),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)

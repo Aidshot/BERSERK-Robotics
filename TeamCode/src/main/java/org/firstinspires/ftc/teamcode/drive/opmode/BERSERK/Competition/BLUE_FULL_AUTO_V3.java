@@ -61,7 +61,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1830;
         double launch_angle = 0.125; //0.173
@@ -112,9 +112,11 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .splineTo(new Vector2d(-5.0, 41.0), Math.toRadians(2.0))
                 .build();
@@ -159,9 +161,11 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 .splineTo(new Vector2d(-25.0, 55.0), Math.toRadians(0.0))
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .splineTo(new Vector2d(-5.0, 41.0), Math.toRadians(2.0))
                 .build();
@@ -208,14 +212,13 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
         //SHOOT POSITIONadb connect 192.168.43.1
         Trajectory C1 = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(new Pose2d(-42,35, Math.toRadians(3.0)))
-                //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.intake.setPower(0.2);
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .build();
 

@@ -61,9 +61,9 @@ public class RED_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1830;
+        double shooter_target_velo = 1850;
         double launch_angle = 0.14; //0.173 (Higher= Lower flap)
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
@@ -111,9 +111,11 @@ public class RED_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
         Trajectory A1 = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
                 .build();
@@ -144,17 +146,18 @@ public class RED_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
         Trajectory B1 = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0.1, () -> {
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
-                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
                 .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(35.0, -59.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(35.0, -57.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -170,14 +173,13 @@ public class RED_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
         //   C AUTO TRAJECTORIES   //
         //SHOOT POSITION
         Trajectory C1 = drive.trajectoryBuilder(startPose)
-                //.strafeTo(new Vector2d(-42.0, 35.0))
                 .addTemporalMarker(0.1, () -> {
-                    robot.intake.setPower(0.2);
                     robot.foldout_lift.setPower(foldout);
+                    robot.intake.setPower(0.8);
                 })
                 .addTemporalMarker(1.8, () -> {
-                    robot.intake.setPower(0);
                     robot.foldout_lift.setPower(0);
+                    robot.intake.setPower(0.0);
                 })
                 .splineTo(new Vector2d(-20.0, -60.0), Math.toRadians(16.0))
                 .build();
@@ -193,7 +195,7 @@ public class RED_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
                 .build();
 
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .splineToLinearHeading( new Pose2d(10.0,-63.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(10.0,-65.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         while (!isStarted()) {

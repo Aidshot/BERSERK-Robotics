@@ -181,7 +181,7 @@ public class RED_FULL_AUTO extends LinearOpMode {
                 .addTemporalMarker(1.8, () -> {
                     robot.foldout_lift.setPower(0);
                 })
-                .splineTo(new Vector2d(-5.0, -38.0), Math.toRadians(2.0))
+                .splineTo(new Vector2d(-5.0, -36.0), Math.toRadians(2.0))
                 .build();
 
         //WOBBLE B POSITION

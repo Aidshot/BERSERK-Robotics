@@ -106,7 +106,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         ////VARIABLES\\\\\
 
         //Flap
-        double launch_angle = 0.124; //0.174
+        double launch_angle = 0.123; //0.124
         double launch_angle_offset = 0;
         double max_launch_angle = 0.174;
         double min_launch_angle = 0.09;
@@ -132,7 +132,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         double targetVelo_offset= 0;
 
         //Set Servos
-        robot.wobble_lift.setPosition(wobble_up);
+        robot.wobble_lift.setPosition(0.23);
         robot.wobble_claw.setPosition(wobble_open);
         robot.kicker.setPosition(kicker_out);
 
@@ -197,7 +197,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
             //Shooter
             if (gamepad1.a) {
-                targetVelo = 1760; //1700
+                targetVelo = 1780; //1700
                 pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
                 robot.blinkinLedDriver.setPattern(pattern);
             } else if (gamepad1.b) {
@@ -225,7 +225,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
             if (gamepad1.dpad_right) {
                 launch_angle = 0.147;
-                targetVelo = 1400;
+                targetVelo = 1500;
             } else if (gamepad1.dpad_left) {
                 launch_angle_offset = 0.0;
                 launch_angle = 0.124;
