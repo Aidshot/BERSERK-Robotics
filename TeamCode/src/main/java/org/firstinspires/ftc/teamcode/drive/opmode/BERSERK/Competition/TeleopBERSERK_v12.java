@@ -98,7 +98,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
         headingController.setInputBounds(-Math.PI, Math.PI);
 
-        pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
         robot.blinkinLedDriver.setPattern(pattern);
 
         waitForStart();
@@ -106,7 +106,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         ////VARIABLES\\\\\
 
         //Flap
-        double launch_angle = 0.123; //0.124
+        double launch_angle = 0.119; //0.124
         double launch_angle_offset = 0;
         double max_launch_angle = 0.174;
         double min_launch_angle = 0.09;
@@ -197,11 +197,11 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
             //Shooter
             if (gamepad1.a) {
-                targetVelo = 1780; //1700
+                targetVelo = 1870; //1700
                 pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
                 robot.blinkinLedDriver.setPattern(pattern);
             } else if (gamepad1.b) {
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
                 robot.blinkinLedDriver.setPattern(pattern);
                 targetVelo = 0;
             }
@@ -228,7 +228,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
                 targetVelo = 1500;
             } else if (gamepad1.dpad_left) {
                 launch_angle_offset = 0.0;
-                launch_angle = 0.124;
+                launch_angle = 0.119;
                 targetVelo = 1760;
             }
 
@@ -331,9 +331,13 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
                     //Normal Robot Control
                     driveDirection = new Pose2d(
-                            Math.signum(ly) * ly * ly * 0.85,
-                            Math.signum(lx) * lx * lx * 0.85,
+                            Math.signum(ly) * ly * ly * 1.0,
+                            Math.signum(lx) * lx * lx * 1.0,
                             Math.signum(rx) * rx * rx * 0.8
+
+                            //Math.signum(ly) * ly * ly * 0.85,
+                            //Math.signum(lx) * lx * lx * 0.85,
+                            //Math.signum(rx) * rx * rx * 0.8
                     );
 
                     // Switch to align to point if gamepad1 left trigger is activated

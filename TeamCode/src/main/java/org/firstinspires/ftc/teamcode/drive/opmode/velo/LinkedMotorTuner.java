@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @TeleOp
-@Disabled
+//@Disabled
 public class LinkedMotorTuner extends LinearOpMode {
     public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.003, 0, 0);
 
@@ -33,11 +33,6 @@ public class LinkedMotorTuner extends LinearOpMode {
         // Change my id
         DcMotorEx myMotor1 = hardwareMap.get(DcMotorEx.class, "shooter1");
         DcMotorEx myMotor2 = hardwareMap.get(DcMotorEx.class, "shooter2");
-
-        // Reverse as appropriate
-        // myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        // myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
-
         myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

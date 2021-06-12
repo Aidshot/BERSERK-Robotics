@@ -58,13 +58,13 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
         robot.init(hardwareMap);
 
         RevBlinkinLedDriver.BlinkinPattern pattern;
-        pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
         robot.blinkinLedDriver.setPattern(pattern);
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1830;
-        double launch_angle = 0.14; //0.173 (Higher= Lower flap)
+        double shooter_target_velo = 1850; //1890
+        double launch_angle = 0.135; //0.173 (Higher= Lower flap)
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -235,7 +235,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 drive.followTrajectory(A1);
 
                 //SHOOT x 3
-                sleep(shootWait);
+                sleep(650);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
@@ -287,6 +287,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 drive.followTrajectory(B1);
 
                 //SHOOT x 3
+                sleep(650);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
@@ -340,6 +341,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 drive.followTrajectory(C1);
 
                 //SHOOT x 3
+                sleep(650);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);

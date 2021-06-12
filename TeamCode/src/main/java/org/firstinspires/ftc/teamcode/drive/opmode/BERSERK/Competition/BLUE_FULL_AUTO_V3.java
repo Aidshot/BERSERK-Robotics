@@ -58,13 +58,13 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
         robot.init(hardwareMap);
 
         RevBlinkinLedDriver.BlinkinPattern pattern;
-        pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1830;
-        double launch_angle = 0.125; //0.173
+        double shooter_target_velo = 1650;
+        double launch_angle = 0.652; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -513,8 +513,8 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
-                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
+                robot.flap.setPosition(0.12);
+                ((DcMotorEx) robot.shooter1).setVelocity(1850); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -537,7 +537,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 sleep(180);
                 robot.kicker.setPosition(kicker_out);
 
-                robot.intake.setPower(0.85);
+                robot.intake.setPower(0.75);
                 robot.feeder_turn.setPower(1);
 
                 //INTAKE 2
