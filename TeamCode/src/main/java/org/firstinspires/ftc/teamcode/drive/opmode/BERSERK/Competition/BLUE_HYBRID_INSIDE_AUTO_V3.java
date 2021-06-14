@@ -63,8 +63,8 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1900; //1890
-        double launch_angle = 0.121; //0.173 (Higher= Lower flap)
+        double shooter_target_velo = 1650; //1890
+        double launch_angle = 0.644;
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -163,7 +163,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
         //PARK
         Trajectory B6 = drive.trajectoryBuilder(B2.end())
                 .strafeRight(10)
-                .splineToSplineHeading( new Pose2d(10.0,10.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .splineToSplineHeading( new Pose2d(10.0,8.0, Math.toRadians(0.0)), Math.toRadians(180.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
@@ -218,7 +218,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
 
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
@@ -228,6 +228,8 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
+
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 sleep(shootWait);
 
                 robot.kicker.setPosition(kicker_out);
@@ -270,7 +272,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
 
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
 
                 //SHOOT POSITION
                 drive.followTrajectory(B1);
@@ -280,6 +282,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 sleep(shootWait);
 
                 robot.kicker.setPosition(kicker_out);
@@ -324,7 +327,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo); //1820
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -333,6 +336,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 sleep(shootWait);
 
                 robot.kicker.setPosition(kicker_out);

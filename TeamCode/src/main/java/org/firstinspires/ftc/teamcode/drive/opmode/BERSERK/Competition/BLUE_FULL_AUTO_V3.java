@@ -61,10 +61,10 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
         robot.blinkinLedDriver.setPattern(pattern);
 
-        double foldout = 0; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
+        double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
         double shooter_target_velo = 1650;
-        double launch_angle = 0.652; //0.173
+        double launch_angle = 0.644; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
@@ -167,12 +167,12 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                     robot.intake.setPower(0.0);
                 })
-                .splineTo(new Vector2d(-5.0, 41.0), Math.toRadians(2.0))
+                .splineTo(new Vector2d(-5.0, 40.0), Math.toRadians(0.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(29.0, 36.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(29.0, 34.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -195,7 +195,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,39.0, Math.toRadians(2.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-5.0,40.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
@@ -227,9 +227,9 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 .forward(12,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(20))
+                        ), new ProfileAccelerationConstraint(7))
                 .build();
 
         //INTAKE SECOND 2
@@ -237,9 +237,9 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 .forward(18,
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(10, DriveConstants.TRACK_WIDTH)
+                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
                         )
-                        ), new ProfileAccelerationConstraint(10))
+                        ), new ProfileAccelerationConstraint(7))
                 .build();
 
         //WOBBLE C POSITION
@@ -513,8 +513,8 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.12);
-                ((DcMotorEx) robot.shooter1).setVelocity(1850); //1820
+                robot.flap.setPosition(launch_angle);
+                ((DcMotorEx) robot.shooter1).setVelocity(1800); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -543,7 +543,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 //INTAKE 2
                 drive.followTrajectory(C2);
 
-                sleep(1000);
+                sleep(800);
 
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
@@ -559,7 +559,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 //INTAKE 2 MORE
                 drive.followTrajectory(C3);
 
-                sleep(1000);
+                sleep(600);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);

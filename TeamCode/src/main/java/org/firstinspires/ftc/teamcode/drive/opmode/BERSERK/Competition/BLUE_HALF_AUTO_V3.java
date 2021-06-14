@@ -63,15 +63,15 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1830;
-        double launch_angle = 0.125; //0.173
+        double shooter_target_velo = 1650;
+        double launch_angle = 0.644; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
         double wobble_up = 0.3;
         double wobble_down = 0.8;
-        long shootWait = 330;
+        long shootWait = 600;
         double webcam_right = 0.1;
         double webcam_left = 0.3;
 
@@ -197,12 +197,22 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
 
         //INTAKE FIRST 2
         Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .forward(12)
+                .forward(12,
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(7))
                 .build();
 
         //INTAKE SECOND 2
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .forward(15)
+                .forward(15,
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(7))
                 .build();
 
         //WOBBLE C POSITION
@@ -269,7 +279,7 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
+                robot.flap.setPosition(launch_angle);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
@@ -325,7 +335,7 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
+                robot.flap.setPosition(launch_angle);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
@@ -412,8 +422,8 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
-                robot.flap.setPosition(0.14);
-                ((DcMotorEx) robot.shooter1).setVelocity(1900); //1820
+                robot.flap.setPosition(launch_angle);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+200);
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -421,19 +431,19 @@ public class BLUE_HALF_AUTO_V3 extends LinearOpMode {
                 //SHOOT x 3
                 sleep(300);
                 robot.kicker.setPosition(kicker_out);
-                sleep(180);
+                sleep(200);
                 robot.kicker.setPosition(kicker_in);
-                sleep(180);
+                sleep(200);
 
                 robot.kicker.setPosition(kicker_out);
-                sleep(180);
+                sleep(200);
                 robot.kicker.setPosition(kicker_in);
-                sleep(180);
+                sleep(200);
 
                 robot.kicker.setPosition(kicker_out);
-                sleep(180);
+                sleep(200);
                 robot.kicker.setPosition(kicker_in);
-                sleep(180);
+                sleep(200);
                 robot.kicker.setPosition(kicker_out);
 
                 robot.intake.setPower(0.80);

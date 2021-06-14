@@ -120,7 +120,7 @@ public class TeleopBERSERK_v14 extends LinearOpMode {
         double min_launch_angle = 0.25; //Highest
 
         //Combo Values
-        double launch_angle = 0.652; //.669
+        double launch_angle = 0.644; //.669
 
         double highgoal_angle = launch_angle;
         double highgoal_velo = 1650;
@@ -276,6 +276,8 @@ public class TeleopBERSERK_v14 extends LinearOpMode {
                     }
                     if (gamepad1.y) {
                         target = Target.POWERSHOT;
+                        targetVelo = 1700;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
                     }
                     if (gamepad1.dpad_right) {
                         target = Target.MID_GOAL;
@@ -294,6 +296,8 @@ public class TeleopBERSERK_v14 extends LinearOpMode {
                     }
                     if (gamepad1.y) {
                         target = Target.POWERSHOT;
+                        targetVelo = 1700;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
                     }
                     break;
 
@@ -316,7 +320,7 @@ public class TeleopBERSERK_v14 extends LinearOpMode {
             //Kicker Servo Control
             switch(shooterState){
                 case RESTING:
-                    if(gamepad1.x){
+                    if(gamepad1.x && (motorVelo > 1000)){
                         shooterTimer.reset();
                         shooterState = ShooterState.FLICKING;
 
@@ -337,13 +341,12 @@ public class TeleopBERSERK_v14 extends LinearOpMode {
                     }
                     break;
             }
-
             robot.kicker.setPosition(shooterState == ShooterState.FLICKING ? kicker_in : kicker_out);
 
             //Emergency "Un-Stuck" Servo Control
             switch(emergencyServoState){
                 case RESTING:
-                    if(gamepad2.x && motorVelo > 1000){
+                    if(gamepad2.x){
                         emergencytimer.reset();
                         emergencyServoState = EmergencyServoState.FLICKING;
 
