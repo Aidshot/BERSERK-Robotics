@@ -65,7 +65,7 @@ public class RED_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         double shooter_target_velo = 1650;
         double launch_angle = 0.644; //0.173
-        double first_shot_offset = 100;
+        double first_shot_offset = 0;
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;

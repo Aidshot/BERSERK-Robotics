@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,14 +25,18 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //@Config
 @TeleOp(group = "BERSERK")
-@Disabled
-public class TeleopBERSERK_v12 extends LinearOpMode {
+public class TeleopBERSERK_BLUE extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 1; //2
 
+    enum Target {
+        HIGH_GOAL,
+        MID_GOAL,
+        POWERSHOT
+    }
+
     enum Mode {
         NORMAL_CONTROL,
-        AUTO_POWERSHOT,
         ALIGN_TO_POINT
     }
 
@@ -49,21 +52,25 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         DRAWING_BACK
     }
 
+    //Initial Mode Setting
+    Target target = Target.HIGH_GOAL;
     ShooterState shooterState = ShooterState.RESTING;
     EmergencyServoState emergencyServoState = EmergencyServoState.RESTING;
-
     private Mode currentMode = Mode.NORMAL_CONTROL;
+
+    //Auto Aim Setup
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 
+    //LEDs Setup
     RevBlinkinLedDriver.BlinkinPattern pattern;
 
     //Target Position of TowerGoal
     private Vector2d targetPosition = new Vector2d(72, 37);
 
     //Shooter Velocity PID
-    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.003, 0, 0);
-    public static double kV = 0.00039;
-    public static double kA = 0.00015;
+    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.002, 0, 0);
+    public static double kV = 0.00037;
+    public static double kA = 0.00017;
     public static double kStatic = 0;
     private double lastTargetVelo = 0.0;
     private final PIDFController veloController = new PIDFController(MOTOR_VELO_PID, kV, kA, kStatic);
@@ -108,14 +115,19 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         ////VARIABLES\\\\\
 
         //Flap
-        double launch_angle = 0.119; //0.124
         double launch_angle_offset = 0;
-        double max_launch_angle = 0.174;
-        double min_launch_angle = 0.09;
+        double max_launch_angle = 0.73; //Lowest
+        double min_launch_angle = 0.25; //Highest
+
+        //Combo Values
+        double launch_angle = 0.644; //.669
+
+        double highgoal_angle = launch_angle;
+        double highgoal_velo = 1650;
 
         //Kicker
         double kicker_out = 0.68;
-        double kicker_in = 0.4; //0.2 //0.3
+        double kicker_in = 0.4;
 
         //Emergency Servo
         double emergency_out = 0.5;
@@ -123,6 +135,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
         //Wobble Claw
         double wobble_close = 0.18;
+        double wobble_start = 0.23;
         double wobble_open = 0.6;
 
         //Wobble Lift
@@ -134,7 +147,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
         double targetVelo_offset= 0;
 
         //Set Servos
-        robot.wobble_lift.setPosition(0.23);
+        robot.wobble_lift.setPosition(wobble_start);
         robot.wobble_claw.setPosition(wobble_open);
         robot.kicker.setPosition(kicker_out);
 
@@ -165,8 +178,6 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
             veloController.setTargetAcceleration((targetVelo + targetVelo_offset - lastTargetVelo) / veloTimer.seconds());
             veloTimer.reset();
 
-            //(Math.min(Math.max(launch_angle + launch_angle_offset, min_launch_angle), max_launch_angle))
-
             lastTargetVelo = targetVelo + targetVelo_offset;
 
             // Get the velocity from the motor with the encoder
@@ -193,16 +204,11 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
             //Gamepad 2 Right Bumper reverses intake
             if (gamepad2.right_bumper) {
                 robot.intake.setPower(-0.8);
-                //robot.feeder_turn.setPower(-1);
                 robot.top_roller.setPower(0.2);
             }
 
-            //Shooter
-            if (gamepad1.a) {
-                targetVelo = 1870; //1700
-                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-                robot.blinkinLedDriver.setPattern(pattern);
-            } else if (gamepad1.b) {
+            //Shooter Off (Shooter On is found in the target switching)
+            if (gamepad1.b) {
                 pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
                 robot.blinkinLedDriver.setPattern(pattern);
                 targetVelo = 0;
@@ -218,27 +224,11 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
 
             //Flap Manual Offset
             if (gamepad1.dpad_up) {
-                launch_angle_offset += -0.00013;
+                launch_angle_offset += -0.001;
             } else if (gamepad1.dpad_down) {
-                launch_angle_offset += 0.00013;
+                launch_angle_offset += 0.001;
             } else if (gamepad1.dpad_right) {
                 launch_angle_offset = 0.0;
-            }
-
-            if (gamepad1.dpad_right) {
-                launch_angle = 0.147;
-                targetVelo = 1500;
-            } else if (gamepad1.dpad_left) {
-                launch_angle_offset = 0.0;
-                launch_angle = 0.119;
-                targetVelo = 1760;
-            }
-
-            // Y prepares for endgame by dropping flap and powering up shooter
-            if (gamepad1.y) {
-                targetVelo = 1700;
-                targetVelo_offset = 0;
-                launch_angle_offset = 0.174;
             }
 
             //Wobble Arm
@@ -262,22 +252,75 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
             else robot.foldout_lift.setPower(0);
 
             //Turn LEDS blue when no ring is present & LEDs haven't changed in 1 sec & if gamepad x is not being pressed
-            if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1){
+            //if(robot.color_sensor.alpha() < 80 && ringTimer.seconds() > 1){
                 //pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
                 //robot.blinkinLedDriver.setPattern(pattern);
-                ringTimer2.reset();
-            }
+                //ringTimer2.reset();
+            //}
 
             //Turn LEDS red when  ring is present & LEDs haven't changed in 1 sec
-            if(robot.color_sensor.alpha() > 80 && ringTimer2.seconds() > 1 ) { //150
+            //if(robot.color_sensor.alpha() > 80 && ringTimer2.seconds() > 1 ) { //150
                 //pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
                 //robot.blinkinLedDriver.setPattern(pattern);
-                ringTimer.reset();
+                //ringTimer.reset();
+            //}
+
+            //FLAP ANGLE & VELOCITY CONTROL
+            switch(target){
+                case HIGH_GOAL:
+                    launch_angle = highgoal_angle;
+                    if (gamepad1.a) {
+                        targetVelo = highgoal_velo;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                        robot.blinkinLedDriver.setPattern(pattern);
+                    }
+                    if (gamepad1.y) {
+                        target = Target.POWERSHOT;
+                        targetVelo = 1700;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                    }
+                    if (gamepad1.dpad_right) {
+                        target = Target.MID_GOAL;
+                    }
+                    break;
+
+                case MID_GOAL:
+                    launch_angle = 0.7;
+                    if (gamepad1.a) {
+                        targetVelo = 1500;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                        robot.blinkinLedDriver.setPattern(pattern);
+                    }
+                    if (gamepad1.dpad_left) {
+                        target = Target.HIGH_GOAL;
+                    }
+                    if (gamepad1.y) {
+                        target = Target.POWERSHOT;
+                        targetVelo = 1700;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                    }
+                    break;
+
+                case POWERSHOT:
+                    launch_angle = 0.7;
+                    if (gamepad1.a) {
+                        targetVelo = 1700;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                        robot.blinkinLedDriver.setPattern(pattern);
+                    }
+                    if (gamepad1.dpad_right) {
+                        target = Target.MID_GOAL;
+                    }
+                    if (gamepad1.dpad_left) {
+                        target = Target.HIGH_GOAL;
+                    }
+                    break;
             }
 
+            //Kicker Servo Control
             switch(shooterState){
                 case RESTING:
-                    if(gamepad1.x){
+                    if(gamepad1.x && (motorVelo > 1000)){
                         shooterTimer.reset();
                         shooterState = ShooterState.FLICKING;
 
@@ -298,9 +341,9 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
                     }
                     break;
             }
-
             robot.kicker.setPosition(shooterState == ShooterState.FLICKING ? kicker_in : kicker_out);
 
+            //Emergency "Un-Stuck" Servo Control
             switch(emergencyServoState){
                 case RESTING:
                     if(gamepad2.x){
@@ -324,7 +367,6 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
                     }
                     break;
             }
-
             robot.emergency_servo.setPosition(emergencyServoState == EmergencyServoState.FLICKING ? emergency_in : emergency_out);
 
             // MODE SWITCH \\
@@ -337,6 +379,7 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
                             Math.signum(lx) * lx * lx * 1.0,
                             Math.signum(rx) * rx * rx * 0.8
 
+                            //(Slower Speed)
                             //Math.signum(ly) * ly * ly * 0.85,
                             //Math.signum(lx) * lx * lx * 0.85,
                             //Math.signum(rx) * rx * rx * 0.8
@@ -345,19 +388,6 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
                     // Switch to align to point if gamepad1 left trigger is activated
                     if (Math.abs(gamepad1.left_trigger) >= 0.2) {
                         currentMode = Mode.ALIGN_TO_POINT;
-                    }
-                    break;
-
-                case AUTO_POWERSHOT:
-
-                    // If x is pressed, we break out of the automatic following
-                    if (gamepad1.dpad_right) {
-                        drive.cancelFollowing();
-                        currentMode = Mode.NORMAL_CONTROL;
-                    }
-                    // If drive finishes its task, cede control to the driver
-                    if (!drive.isBusy()) {
-                        currentMode = Mode.NORMAL_CONTROL;
                     }
                     break;
 
@@ -409,9 +439,11 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
             drive.getLocalizer().update();
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+            //Dashboard Telemetry
+            packet.put("FlyWheel Velocity", motorVelo);
+
             //Driver Station Telemetry
-            
-            //telemetry.addData("Alpha", robot.color_sensor.alpha());
+            telemetry.addData("target", target);
             telemetry.addData("mode", currentMode);
             telemetry.addData("launch angle", launch_angle+launch_angle_offset);
             telemetry.addData("Distance", getDistance);
@@ -420,9 +452,6 @@ public class TeleopBERSERK_v12 extends LinearOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
-
-            //Dashboard Telemetry
-          //  packet.put("FlyWheel Velocity", motorVelo);
         }
     }
 }

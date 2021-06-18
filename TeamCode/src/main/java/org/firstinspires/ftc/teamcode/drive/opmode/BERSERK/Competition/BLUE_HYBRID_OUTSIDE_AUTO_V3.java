@@ -228,7 +228,7 @@ public class BLUE_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 sleep(7000);
                 //SHOOT POSITION
@@ -287,7 +287,7 @@ public class BLUE_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
 
                 sleep(4000);
 
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(B1);
@@ -341,7 +341,7 @@ public class BLUE_HYBRID_OUTSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo+100);
+                ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);

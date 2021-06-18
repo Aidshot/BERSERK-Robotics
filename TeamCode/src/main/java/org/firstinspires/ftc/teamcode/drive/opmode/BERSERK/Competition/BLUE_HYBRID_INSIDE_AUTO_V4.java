@@ -30,7 +30,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
+public class BLUE_HYBRID_INSIDE_AUTO_V4 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -63,8 +63,8 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1650; //1890
-        double launch_angle = 0.644;
+        double shooter_target_velo = 1800;
+        double launch_angle = 0.67; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;

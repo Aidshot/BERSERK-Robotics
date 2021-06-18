@@ -63,7 +63,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1650;
+        double shooter_target_velo = 1630;
         double launch_angle = 0.644; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
@@ -136,7 +136,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                     robot.wobble_lift.setPosition(wobble_down);
                 })
                 //  .splineToConstantHeading(new Vector2d(-40, 25.0),Math.toRadians(80),
-                .splineToConstantHeading(new Vector2d(-41.5, 20.5),Math.toRadians(80),
+                .splineToConstantHeading(new Vector2d(-41.5, 21.5),Math.toRadians(80),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 //  new MecanumVelocityConstraint(7, DriveConstants.TRACK_WIDTH)
@@ -167,7 +167,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                     robot.intake.setPower(0.0);
                 })
-                .splineTo(new Vector2d(-5.0, 40.0), Math.toRadians(0.0))
+                .splineTo(new Vector2d(-5.0, 43.0), Math.toRadians(0.0))
                 .build();
 
         //WOBBLE B POSITION
@@ -185,7 +185,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 .strafeRight(10)
                 .splineToSplineHeading(new Pose2d(-19.0, 39.0, Math.toRadians(180.0)), Math.toRadians(180.0))
                 .splineToSplineHeading( new Pose2d(-35.0, 25.0, Math.toRadians(115.0)), Math.toRadians(180)) //135
-                .splineToConstantHeading( new Vector2d(-40.0, 24.0), Math.toRadians(100),
+                .splineToConstantHeading( new Vector2d(-39.0, 26.0), Math.toRadians(100),
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(8, DriveConstants.TRACK_WIDTH)
@@ -200,7 +200,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
 
         //DROP WOBBLE
         Trajectory B6 = drive.trajectoryBuilder(B5.end())
-                .splineToLinearHeading( new Pose2d(20.0, 40.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(20.0, 42.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
                 .build();
 
         //PARK
@@ -514,7 +514,7 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(1800); //1820
+                ((DcMotorEx) robot.shooter1).setVelocity(1690); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);
@@ -558,6 +558,8 @@ public class BLUE_FULL_AUTO_V3 extends LinearOpMode {
 
                 //INTAKE 2 MORE
                 drive.followTrajectory(C3);
+
+                ((DcMotorEx) robot.shooter1).setVelocity(1650); //1820
 
                 sleep(600);
                 robot.kicker.setPosition(kicker_out);

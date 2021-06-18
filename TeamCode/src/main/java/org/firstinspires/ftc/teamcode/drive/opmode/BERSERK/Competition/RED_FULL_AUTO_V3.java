@@ -63,7 +63,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1650;
+        double shooter_target_velo = 1630;
         double launch_angle = 0.644; //0.173
         double kicker_out = 0.7;
         double kicker_in = 0.25; //02
@@ -195,7 +195,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
 
         //SHOOT
         Trajectory B5 = drive.trajectoryBuilder(B4.end())
-                .splineToLinearHeading( new Pose2d(-5.0,-41.0, Math.toRadians(3.0)), Math.toRadians(0.0))
+                .splineToLinearHeading( new Pose2d(-5.0,-40.0, Math.toRadians(3.0)), Math.toRadians(0.0))
                 .build();
 
         //DROP WOBBLE
@@ -520,7 +520,7 @@ public class RED_FULL_AUTO_V3 extends LinearOpMode {
                 robot.wobble_lift.setPosition(wobble_up);
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
-                ((DcMotorEx) robot.shooter1).setVelocity(1800); //1820
+                ((DcMotorEx) robot.shooter1).setVelocity(1720); //1820
 
                 //SHOOT POSITION
                 drive.followTrajectory(C1);

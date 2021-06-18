@@ -30,7 +30,7 @@ import java.util.Arrays;
 import static com.arcrobotics.ftclib.vision.UGContourRingPipeline.Config;
 
 @Autonomous(group = "BERSERK")
-public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
+public class BLUE_HYBRID_OUTSIDE_AUTO_V4 extends LinearOpMode {
 
     private static final int CAMERA_WIDTH = 320; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 240; // height of wanted camera resolution
@@ -63,19 +63,19 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         double foldout = -1; //SET TO -1 TO FOLDOUT INTAKE, 0 TO DISABLE
 
-        double shooter_target_velo = 1650; //1890
-        double launch_angle = 0.644;
-        double kicker_out = 0.7;
+        double shooter_target_velo = 1800;
+        double launch_angle = 0.67; //0.173
+        double kicker_out = 0.67;
         double kicker_in = 0.25; //02
         double wobble_close = 0.18;
         double wobble_open = 0.6;
         double wobble_up = 0.3;
         double wobble_down = 0.8;
-        long shootWait = 500;
+        long shootWait = 700;
         double webcam_right = 0.1;
         double webcam_left = 0.3;
 
-        robot.webcam_servo.setPosition(webcam_left);
+        robot.webcam_servo.setPosition(webcam_right);
 
         int cameraMonitorViewId = this
                 .hardwareMap
@@ -103,7 +103,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         State state = State.ZERO;
 
-        Pose2d startPose = new Pose2d(-63.0,26, Math.toRadians(0.0));
+        Pose2d startPose = new Pose2d(-63.0,50, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
 
         //   A AUTO TRAJECTORIES   //
@@ -117,17 +117,23 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                     robot.intake.setPower(0.0);
                 })
-                .splineTo(new Vector2d(-20.0, 12.0), Math.toRadians(18.0))
+                .splineTo(new Vector2d(-20.0, 58.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE A POSITION
         Trajectory A2 = drive.trajectoryBuilder(A1.end())
-                .splineToLinearHeading(new Pose2d(12.0, 43.0, Math.toRadians(0.0)), Math.toRadians(90.0))
+                .splineToLinearHeading(new Pose2d(-4.0, 60.0, Math.toRadians(-90.0)), Math.toRadians(0.0))
+                .build();
+
+        //MOVE OUT OF THE WAY
+        Trajectory A3 = drive.trajectoryBuilder(A2.end())
+                .strafeRight(10)
+                .splineToSplineHeading( new Pose2d(-25.0, 53.0, Math.toRadians(0.0)), Math.toRadians(180))
                 .build();
 
         //PARK
-        Trajectory A4 = drive.trajectoryBuilder(A2.end())
-                .strafeRight(34, //-90
+        Trajectory A4 = drive.trajectoryBuilder(A3.end())
+                .splineToSplineHeading( new Pose2d(10.0, 40.0, Math.toRadians(0.0)), Math.toRadians(0), //-90
                         new MinVelocityConstraint(Arrays.asList(
                                 new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)
@@ -146,13 +152,12 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                     robot.intake.setPower(0.0);
                 })
-                //.splineTo(new Vector2d(-5.0, -41.0), Math.toRadians(2.0))
-                .splineTo(new Vector2d(-20.0, 12.0), Math.toRadians(18.0))
+                .splineTo(new Vector2d(-20.0, 58.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE B POSITION
         Trajectory B2 = drive.trajectoryBuilder(B1.end())
-                .splineToLinearHeading(new Pose2d(35.0, 15.0, Math.toRadians(0.0)), Math.toRadians(0.0))
+                .splineToLinearHeading(new Pose2d(35.0, 52.0, Math.toRadians(180.0)), Math.toRadians(0.0))
                 .build();
 
         //MOVE TOWARDS STACK
@@ -162,8 +167,9 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
 
         //PARK
         Trajectory B6 = drive.trajectoryBuilder(B2.end())
-                .strafeRight(10)
-                .splineToSplineHeading( new Pose2d(10.0,8.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .strafeRight(4)
+                .splineToConstantHeading(new Vector2d(20.0, 52.0), Math.toRadians(180.0))
+                .splineToSplineHeading( new Pose2d(6.0,59.0, Math.toRadians(0.0)), Math.toRadians(180.0))
                 .build();
 
         //   C AUTO TRAJECTORIES   //
@@ -177,17 +183,21 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                     robot.foldout_lift.setPower(0);
                     robot.intake.setPower(0.0);
                 })
-                .splineTo(new Vector2d(-20.0, 12.0), Math.toRadians(18.0))
+                .splineTo(new Vector2d(-20.0, 58.0), Math.toRadians(-10.0))
                 .build();
 
         //WOBBLE C POSITION
         Trajectory C2 = drive.trajectoryBuilder(C1.end())
-                .splineToLinearHeading( new Pose2d(52.0,40.0, Math.toRadians(0.0)), Math.toRadians(90.0))
+                .splineToLinearHeading( new Pose2d(50.0,58.0, Math.toRadians(-90.0)), Math.toRadians(0.0),
+                        new MinVelocityConstraint(Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(70, DriveConstants.TRACK_WIDTH)
+                        )
+                        ), new ProfileAccelerationConstraint(60))
                 .build();
 
         Trajectory C3 = drive.trajectoryBuilder(C2.end())
-                .strafeRight(10)
-                .splineToSplineHeading( new Pose2d(10.0,8.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .splineToLinearHeading( new Pose2d(10.0,60.0, Math.toRadians(0.0)), Math.toRadians(0.0))
                 .build();
 
         while (!isStarted()) {
@@ -220,6 +230,7 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.flap.setPosition(launch_angle);
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
+                sleep(7000);
                 //SHOOT POSITION
                 drive.followTrajectory(A1);
 
@@ -228,7 +239,6 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
-
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
                 sleep(shootWait);
 
@@ -257,6 +267,9 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 sleep(400);
                 robot.wobble_lift.setPosition(wobble_up);
 
+                drive.followTrajectory(A3);
+
+                sleep(3000);
                 drive.followTrajectory(A4);
                 PoseStorage.currentPose = drive.getPoseEstimate();
 
@@ -272,13 +285,14 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.wobble_claw.setPosition(wobble_close);
                 robot.flap.setPosition(launch_angle);
 
+                sleep(4000);
+
                 ((DcMotorEx) robot.shooter1).setVelocity(shooter_target_velo);
 
                 //SHOOT POSITION
                 drive.followTrajectory(B1);
 
                 //SHOOT x 3
-                sleep(1000);
                 robot.kicker.setPosition(kicker_out);
                 sleep(shootWait);
                 robot.kicker.setPosition(kicker_in);
@@ -351,8 +365,6 @@ public class BLUE_HYBRID_INSIDE_AUTO_V3 extends LinearOpMode {
                 robot.kicker.setPosition(kicker_out);
 
                 ((DcMotorEx) robot.shooter1).setVelocity(0); //1820
-
-                sleep(5000);
 
                 //DROP WOBBLE
                 drive.followTrajectory(C2);
